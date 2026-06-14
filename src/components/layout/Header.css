@@ -1,0 +1,138 @@
+.header {
+  height: 64px;
+  background-color: var(--white);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* Gauche */
+.header__titre {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Droite */
+.header__right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Recherche */
+.header__search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0 12px;
+}
+
+.header__search-icon {
+  color: var(--text-light);
+  flex-shrink: 0;
+}
+
+.header__search-input {
+  border: none;
+  background: transparent;
+  padding: 8px 0;
+  font-size: 14px;
+  color: var(--text-primary);
+  width: 200px;
+}
+
+.header__search-input::placeholder {
+  color: var(--text-light);
+}
+
+/* Notifications */
+.header__notif {
+  position: relative;
+  background: transparent;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  transition: background-color 0.2s;
+}
+
+.header__notif:hover {
+  background-color: var(--background);
+}
+
+.header__notif-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 16px;
+  height: 16px;
+  background-color: var(--tertiary);
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Profil */
+.header__profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: var(--radius-md);
+  transition: background-color 0.2s;
+}
+
+.header__profile:hover {
+  background-color: var(--background);
+}
+
+.header__profile-avatar {
+  width: 36px;
+  height: 36px;
+  background-color: var(--primary-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.header__profile-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.header__profile-role {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header__search {
+    display: none;
+  }
+
+  .header__profile-info {
+    display: none;
+  }
+}
