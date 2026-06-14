@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
@@ -14,6 +14,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Redirection racine vers login */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
         {/* Login */}
         <Route path="/login" element={<LoginPage />} />
 
@@ -83,15 +86,8 @@ function App() {
           }
         />
 
-        {/* Redirection par défaut */}
-        <Route
-          path="*"
-          element={
-            <ProtectedRoute>
-              <DashboardPage />
-            </ProtectedRoute>
-          }
-        />
+        {/* 404 */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   );
