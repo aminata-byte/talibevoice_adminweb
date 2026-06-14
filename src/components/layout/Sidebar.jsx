@@ -1,3 +1,4 @@
+import "./Sidebar.css";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -6,45 +7,48 @@ import {
   Heart,
   Handshake,
   GraduationCap,
-  FileText,
+  Briefcase,
   Bell,
-  BarChart3,
+  FileText,
   LogOut,
   Settings,
+  User,
+  AlertTriangle,
 } from "lucide-react";
+import { useAdminAuth } from "../../context/AdminAuthContext";
 import "./Sidebar.css";
 
 const menuItems = [
   {
     icon: <LayoutDashboard size={20} />,
-    label: "Dashboard",
+    label: "Tableau de bord",
     path: "/dashboard",
   },
   { icon: <Building2 size={20} />, label: "Daaras", path: "/daaras" },
   { icon: <Users size={20} />, label: "Talibés", path: "/talibes" },
+  { icon: <AlertTriangle size={20} />, label: "Besoins", path: "/besoins" },
   { icon: <Heart size={20} />, label: "Dons", path: "/dons" },
-  { icon: <Handshake size={20} />, label: "Partenaires", path: "/partenaires" },
   {
     icon: <GraduationCap size={20} />,
     label: "Formations",
     path: "/formations",
   },
-  { icon: <Users size={20} />, label: "Agents", path: "/agents" },
-  { icon: <FileText size={20} />, label: "Rapports", path: "/rapports" },
+  { icon: <Briefcase size={20} />, label: "Offres d'emploi", path: "/offres" },
   { icon: <Bell size={20} />, label: "Notifications", path: "/notifications" },
+  { icon: <FileText size={20} />, label: "Rapports", path: "/rapports" },
   {
-    icon: <BarChart3 size={20} />,
-    label: "Statistiques",
-    path: "/statistiques",
+    icon: <Handshake size={20} />,
+    label: "Utilisateurs",
+    path: "/utilisateurs",
   },
 ];
 
 function Sidebar() {
   const navigate = useNavigate();
+  const { admin, logout } = useAdminAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem("admin_token");
-    localStorage.removeItem("admin");
+    logout();
     navigate("/login");
   };
 
@@ -53,7 +57,7 @@ function Sidebar() {
       {/* Logo */}
       <div className="sidebar__logo">
         <img
-          src="/src/assets/logo.png"
+          src="/src/assets/logo.jpg"
           alt="TalibeVoice"
           className="sidebar__logo-img"
         />
@@ -78,16 +82,42 @@ function Sidebar() {
 
       {/* Footer */}
       <div className="sidebar__footer">
-        <NavLink to="/parametres" className="sidebar__link">
+        <NavLink
+          to="/profile"
+          className={({ isActive }) =>
+            `sidebar__link ${isActive ? "sidebar__link--active" : ""}`
+          }
+        >
+          <span className="sidebar__link-icon">
+            <User size={20} />
+          </span>
+          <span className="sidebar__link-label">Profile</span>
+        </NavLink>
+        <NavLink
+          to="/parametres"
+          className={({ isActive }) =>
+            `sidebar__link ${isActive ? "sidebar__link--active" : ""}`
+          }
+        >
           <span className="sidebar__link-icon">
             <Settings size={20} />
           </span>
-          <span className="sidebar__link-label">Paramètres</span>
+          <span className="sidebar__link-label">Settings</span>
         </NavLink>
-        <button className="sidebar__logout" onClick={handleLogout}>
-          <LogOut size={20} />
-          <span>Déconnexion</span>
-        </button>
+
+        {/* Admin info */}
+        <div className="sidebar__admin">
+          <div className="sidebar__admin-avatar">
+            {admin?.name?.[0]?.toUpperCase() || "A"}
+          </div>
+          <div className="sidebar__admin-info">
+            <p className="sidebar__admin-name">{admin?.name || "Admin"}</p>
+            <p className="sidebar__admin-role">ADMINISTRATEUR</p>
+          </div>
+          <button className="sidebar__admin-logout" onClick={handleLogout}>
+            <LogOut size={16} />
+          </button>
+        </div>
       </div>
     </aside>
   );

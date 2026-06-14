@@ -4,23 +4,24 @@ import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import DaarasPage from "./pages/daaras/DaarasPage";
 import TalibesPage from "./pages/talibes/TalibesPage";
+import BesoinsPage from "./pages/besoins/BesoinsPage";
 import DonsPage from "./pages/dons/DonsPage";
-import PartenairesPage from "./pages/partenaires/PartenairesPage";
 import FormationsPage from "./pages/formations/FormationsPage";
-import AgentsPage from "./pages/agents/AgentsPage";
+import OffresPage from "./pages/offres/OffresPage";
+import NotificationsPage from "./pages/notifications/NotificationsPage";
 import RapportsPage from "./pages/rapports/RapportsPage";
+import UtilisateursPage from "./pages/utilisateurs/UtilisateursPage";
+import AgentsPage from "./pages/agents/AgentsPage";
+import PartenairesPage from "./pages/partenaires/PartenairesPage";
+import ProfilePage from "./pages/profile/ProfilePage";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Redirection racine vers login */}
         <Route path="/" element={<Navigate to="/login" replace />} />
-
-        {/* Login */}
         <Route path="/login" element={<LoginPage />} />
 
-        {/* Pages protégées */}
         <Route
           path="/dashboard"
           element={
@@ -46,18 +47,18 @@ function App() {
           }
         />
         <Route
-          path="/dons"
+          path="/besoins"
           element={
             <ProtectedRoute>
-              <DonsPage />
+              <BesoinsPage />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/partenaires"
+          path="/dons"
           element={
             <ProtectedRoute>
-              <PartenairesPage />
+              <DonsPage />
             </ProtectedRoute>
           }
         />
@@ -70,10 +71,18 @@ function App() {
           }
         />
         <Route
-          path="/agents"
+          path="/offres"
           element={
             <ProtectedRoute>
-              <AgentsPage />
+              <OffresPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute>
+              <NotificationsPage />
             </ProtectedRoute>
           }
         />
@@ -85,8 +94,39 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/utilisateurs"
+          element={
+            <ProtectedRoute>
+              <UtilisateursPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/agents"
+          element={
+            <ProtectedRoute>
+              <AgentsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/partenaires"
+          element={
+            <ProtectedRoute>
+              <PartenairesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
 
-        {/* 404 */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>

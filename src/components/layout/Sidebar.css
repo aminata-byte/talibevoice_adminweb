@@ -29,10 +29,10 @@
 .sidebar__logo-label {
   font-size: 12px;
   font-weight: 700;
-  color: var(--primary);
+  color: var(--primary-light);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  background-color: rgba(27, 125, 75, 0.15);
+  background-color: rgba(27, 125, 75, 0.3);
   padding: 2px 8px;
   border-radius: var(--radius-sm);
 }
@@ -52,7 +52,7 @@
   gap: 12px;
   padding: 10px 12px;
   border-radius: var(--radius-md);
-  color: var(--sidebar-text);
+  color: rgba(255, 255, 255, 0.6);
   font-size: 14px;
   font-weight: 400;
   transition: all 0.2s;
@@ -66,7 +66,7 @@
 }
 
 .sidebar__link--active {
-  background-color: var(--sidebar-active);
+  background-color: var(--primary);
   color: var(--white);
   font-weight: 600;
 }
@@ -91,25 +91,64 @@
   gap: 2px;
 }
 
-.sidebar__logout {
+/* Admin info */
+.sidebar__admin {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   padding: 10px 12px;
   border-radius: var(--radius-md);
-  color: var(--tertiary);
-  font-size: 14px;
-  font-weight: 500;
-  background: transparent;
-  width: 100%;
-  text-align: left;
-  transition: all 0.2s;
-  cursor: pointer;
-  border: none;
+  background-color: rgba(255, 255, 255, 0.06);
+  margin-top: 0.5rem;
 }
 
-.sidebar__logout:hover {
-  background-color: rgba(173, 80, 90, 0.15);
+.sidebar__admin-avatar {
+  width: 36px;
+  height: 36px;
+  background-color: var(--primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.sidebar__admin-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar__admin-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar__admin-role {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.05em;
+}
+
+.sidebar__admin-logout {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+  flex-shrink: 0;
+}
+
+.sidebar__admin-logout:hover {
+  color: var(--tertiary);
 }
 
 /* Responsive */
