@@ -1,1 +1,218 @@
- 
+.besoins {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.besoins__header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.besoins__location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  background-color: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+}
+
+.besoins__view-toggle {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.besoins__view-btn {
+  padding: 8px 14px;
+  font-size: 13px;
+  background-color: var(--white);
+  color: var(--text-secondary);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.besoins__view-btn--active {
+  background-color: var(--primary);
+  color: var(--white);
+}
+
+/* Kanban */
+.besoins__kanban {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.besoins__column {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background-color: var(--background);
+  border: 1px solid var(--border);
+}
+
+.besoins__column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.besoins__column-header--urgent {
+  background-color: var(--tertiary);
+  color: var(--white);
+}
+
+.besoins__column-header--normal {
+  background-color: #F57F17;
+  color: var(--white);
+}
+
+.besoins__column-header--faible {
+  background-color: var(--primary);
+  color: var(--white);
+}
+
+.besoins__column-count {
+  background-color: rgba(255, 255, 255, 0.3);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.besoins__column-body {
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 200px;
+}
+
+.besoins__empty {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 1rem 0;
+}
+
+/* Kanban card */
+.besoin__kanban-card {
+  background-color: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: box-shadow 0.2s;
+}
+
+.besoin__kanban-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.besoin__kanban-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.besoin__kanban-daara {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.besoin__kanban-date {
+  font-size: 11px;
+  color: var(--text-light);
+}
+
+.besoin__kanban-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary-dark);
+}
+
+.besoin__kanban-type {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.besoin__kanban-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.besoin__kanban-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.besoin__kanban-avatar {
+  width: 24px;
+  height: 24px;
+  background-color: var(--primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.besoin__kanban-detail {
+  background: transparent;
+  border: none;
+  font-size: 12px;
+  color: var(--primary);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.besoins__add-btn {
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+  padding: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s;
+}
+
+.besoins__add-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+@media (max-width: 768px) {
+  .besoins__kanban {
+    grid-template-columns: 1fr;
+  }
+}
