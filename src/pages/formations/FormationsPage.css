@@ -1,0 +1,203 @@
+.formations {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formations__filters {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  background-color: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+}
+
+.formations__filter-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.formations__reset {
+  background: transparent;
+  border: none;
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.formations__layout {
+  display: grid;
+  grid-template-columns: 1fr 240px;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.formations__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+/* Card */
+.formation__card {
+  background-color: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.formation__card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.formation__card-img {
+  height: 120px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 10px;
+  position: relative;
+}
+
+.formation__card-domaine-badge {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: var(--text-primary);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.formation__card-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formation__card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.formation__card-partenaire {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.formation__card-infos {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.formation__card-info {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.formation__card-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.formation__card-places {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.formation__progress {
+  flex: 1;
+  height: 4px;
+  background-color: var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.formation__progress-fill {
+  height: 100%;
+  background-color: var(--primary);
+  border-radius: 20px;
+}
+
+.formation__card-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+/* Promo card */
+.formations__promo {
+  background-color: var(--primary);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: sticky;
+  top: 80px;
+}
+
+.formations__promo-icon {
+  font-size: 2rem;
+}
+
+.formations__promo-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--white);
+}
+
+.formations__promo-text {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+}
+
+.formations__promo-btn {
+  background-color: var(--white);
+  color: var(--primary-dark);
+  padding: 10px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  width: 100%;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  margin-top: auto;
+}
+
+.formations__promo-btn:hover {
+  background-color: var(--primary-light);
+}
+
+@media (max-width: 1100px) {
+  .formations__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .formations__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .formations__grid {
+    grid-template-columns: 1fr;
+  }
+}
