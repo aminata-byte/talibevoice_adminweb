@@ -1,0 +1,123 @@
+ 
+.rapports {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.rapports__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.rapports__stat-card {
+  background-color: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.rapports__stat-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+}
+
+.rapports__stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.rapports__stat-icon {
+  position: absolute;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.15;
+  font-size: 2rem;
+}
+
+.rapports__stat-card--red .rapports__stat-icon {
+  color: var(--tertiary);
+  opacity: 1;
+}
+
+.rapports__stat-card--green .rapports__stat-icon {
+  color: var(--primary);
+  opacity: 1;
+}
+
+.rapports__stat-card--blue .rapports__stat-icon {
+  color: #2196F3;
+  opacity: 1;
+}
+
+.rapports__tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--border);
+}
+
+.rapports__tab {
+  padding: 10px 1.5rem;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.rapports__tab--active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  font-weight: 600;
+}
+
+.rapports__statut {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.rapports__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.rapports__dot--green {
+  background-color: var(--primary);
+}
+
+.rapports__dot--red {
+  background-color: var(--tertiary);
+}
+
+.rapports__valider-btn {
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  background-color: var(--primary);
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.rapports__valider-btn:hover {
+  background-color: var(--primary-dark);
+}
