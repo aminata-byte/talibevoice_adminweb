@@ -9,20 +9,25 @@ import {
   UserCheck,
   TrendingUp,
   ArrowUpRight,
-  CheckCircle2,
-  Clock,
+  ArrowDownRight,
 } from "lucide-react";
 import AdminLayout from "../components/layout/AdminLayout";
 import adminService from "../services/adminService";
 import "./DashboardPage.css";
 
+// Cible mensuelle provisoire en attendant une vraie configuration côté backend
+const OBJECTIF_MENSUEL_FCFA = 5000000;
+
 function DashboardPage() {
   const [stats, setStats] = useState({
     total_talibes: 0,
     total_daaras: 0,
-    total_dons: 0,
   });
   const [dons, setDons] = useState([]);
+  const [formations, setFormations] = useState([]);
+  const [agents, setAgents] = useState([]);
+  const [insertions, setInsertions] = useState([]);
+  const [besoins, setBesoins] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -32,12 +37,27 @@ function DashboardPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [statsData, donsData] = await Promise.all([
+      const [
+        statsData,
+        donsData,
+        formationsData,
+        agentsData,
+        insertionsData,
+        besoinsData,
+      ] = await Promise.all([
         adminService.getStats(),
-        adminService.getDons({ limit: 5 }),
+        adminService.getDons(),
+        adminService.getFormations(),
+        adminService.getAgents(),
+        adminService.getInsertions(),
+        adminService.getBesoins(),
       ]);
       setStats(statsData);
-      setDons(Array.isArray(donsData) ? donsData.slice(0, 5) : []);
+      setDons(Array.isArray(donsData) ? donsData : []);
+      setFormations(Array.isArray(formationsData) ? formationsData : []);
+      setAgents(Array.isArray(agentsData) ? agentsData : []);
+      setInsertions(Array.isArray(insertionsData) ? insertionsData : []);
+      setBesoins(Array.isArray(besoinsData) ? besoinsData : []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -45,61 +65,96 @@ function DashboardPage() {
     }
   };
 
+  const donsFinanciers = dons.filter((d) => d.type === "financier");
+  const donsValides = donsFinanciers.filter((d) => d.statut === "valide");
+  const totalDonsValides = donsValides.reduce(
+    (acc, d) => acc + (Number(d.montant) || 0),
+    0,
+  );
+
+  const formationsActives = formations.filter((f) => f.statut === "actif");
+  const agentsActifs = agents.filter(
+    (a) => a.role === "agent" && a.statut === "actif",
+  );
+  const insertionsEnCours = insertions.filter(
+    (i) => i.statut === "en_cours" || i.statut === "actif",
+  );
+  const besoinsUrgents = besoins.filter((b) => b.priorite === "urgent");
+
+  // Dons du mois en cours, pour l'objectif mensuel
+  const maintenant = new Date();
+  const donsDuMois = donsValides.filter((d) => {
+    const date = new Date(d.created_at);
+    return (
+      date.getMonth() === maintenant.getMonth() &&
+      date.getFullYear() === maintenant.getFullYear()
+    );
+  });
+  const collecteMois = donsDuMois.reduce(
+    (acc, d) => acc + (Number(d.montant) || 0),
+    0,
+  );
+  const pctObjectif = Math.min(
+    Math.round((collecteMois / OBJECTIF_MENSUEL_FCFA) * 100),
+    100,
+  );
+
   const statCards = [
     {
       icon: <Users size={20} />,
       label: "Talibés recensés",
       value: stats.total_talibes?.toLocaleString() || "0",
-      sub: "+124 ce mois",
       color: "green",
     },
     {
       icon: <Building2 size={20} />,
       label: "Daaras actifs",
       value: stats.total_daaras?.toLocaleString() || "0",
-      sub: "+8 ce mois",
       color: "blue",
     },
     {
       icon: <Heart size={20} />,
       label: "Dons validés",
-      value: `${(stats.total_dons / 1000000).toFixed(1)}M FCFA`,
-      sub: "FCFA ce mois",
+      value: `${(totalDonsValides / 1000000).toFixed(1)}M FCFA`,
       color: "green",
     },
     {
       icon: <AlertTriangle size={20} />,
-      label: "Sessions urgentes",
-      value: "17",
+      label: "Besoins urgents",
+      value: besoinsUrgents.length.toString(),
       sub: "À traiter",
       color: "red",
+      negative: true,
     },
     {
       icon: <GraduationCap size={20} />,
       label: "Formations actives",
-      value: "23",
+      value: formationsActives.length.toString(),
       sub: "En cours",
       color: "blue",
     },
     {
       icon: <Briefcase size={20} />,
-      label: "Offres d'emploi",
-      value: "12",
-      sub: "Disponibles",
+      label: "Insertions en cours",
+      value: insertionsEnCours.length.toString(),
       color: "green",
     },
     {
       icon: <UserCheck size={20} />,
       label: "Agents actifs",
-      value: "48",
+      value: agentsActifs.length.toString(),
       sub: "Actifs",
       color: "blue",
     },
   ];
 
   const moisLabels = ["Jan", "Fév", "Mar", "Avr", "Mai", "Jun"];
-  const moisData = [850000, 1200000, 980000, 1500000, 2100000, 4200000];
-  const maxVal = Math.max(...moisData);
+  const moisData = moisLabels.map((_, index) =>
+    donsValides
+      .filter((d) => new Date(d.created_at).getMonth() === index)
+      .reduce((acc, d) => acc + (Number(d.montant) || 0), 0),
+  );
+  const maxVal = Math.max(...moisData, 1);
 
   const getStatutClass = (statut) => {
     if (statut === "valide") return "dash__badge dash__badge--green";
@@ -112,6 +167,10 @@ function DashboardPage() {
     if (statut === "en_attente") return "En attente";
     return "Rejeté";
   };
+
+  const derniersDons = [...dons]
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    .slice(0, 5);
 
   return (
     <AdminLayout titre="Tableau de bord">
@@ -129,13 +188,19 @@ function DashboardPage() {
                 >
                   {card.icon}
                 </div>
-                <ArrowUpRight size={16} className="dashboard__stat-trend" />
+                {card.negative ? (
+                  <ArrowDownRight size={16} className="dashboard__stat-trend" />
+                ) : (
+                  <ArrowUpRight size={16} className="dashboard__stat-trend" />
+                )}
               </div>
               <div className="dashboard__stat-value">
                 {loading ? "..." : card.value}
               </div>
               <div className="dashboard__stat-label">{card.label}</div>
-              <div className="dashboard__stat-sub">{card.sub}</div>
+              {card.sub && (
+                <div className="dashboard__stat-sub">{card.sub}</div>
+              )}
             </div>
           ))}
         </div>
@@ -145,10 +210,6 @@ function DashboardPage() {
           <div className="dashboard__card dashboard__card--large">
             <div className="dashboard__card-header">
               <h3 className="dashboard__card-title">Dons par mois (FCFA)</h3>
-              <select className="dashboard__select">
-                <option>Année 2024</option>
-                <option>Année 2025</option>
-              </select>
             </div>
             <div className="dashboard__chart">
               {moisData.map((val, index) => (
@@ -174,24 +235,23 @@ function DashboardPage() {
             </div>
             <h3 className="dashboard__objectif-title">Objectif Mensuel</h3>
             <p className="dashboard__objectif-text">
-              Vous êtes à 85% de votre objectif de collecte pour ce mois.
-              Continuez vos efforts!
+              Vous êtes à {pctObjectif}% de votre objectif de collecte pour ce
+              mois.
             </p>
             <div className="dashboard__progress">
               <div className="dashboard__progress-bar">
                 <div
                   className="dashboard__progress-fill"
-                  style={{ width: "85%" }}
+                  style={{ width: `${pctObjectif}%` }}
                 />
               </div>
               <div className="dashboard__progress-labels">
-                <span>Collecté 4.2M</span>
-                <span>Cible 5.0M</span>
+                <span>Collecté {(collecteMois / 1000000).toFixed(1)}M</span>
+                <span>
+                  Cible {(OBJECTIF_MENSUEL_FCFA / 1000000).toFixed(1)}M
+                </span>
               </div>
             </div>
-            <button className="dashboard__objectif-btn">
-              Générer Rapport Mensuel
-            </button>
           </div>
         </div>
 
@@ -226,7 +286,7 @@ function DashboardPage() {
                     Chargement...
                   </td>
                 </tr>
-              ) : dons.length === 0 ? (
+              ) : derniersDons.length === 0 ? (
                 <tr>
                   <td
                     colSpan="5"
@@ -239,8 +299,8 @@ function DashboardPage() {
                   </td>
                 </tr>
               ) : (
-                dons.map((don, index) => (
-                  <tr key={index}>
+                derniersDons.map((don) => (
+                  <tr key={don.id}>
                     <td>
                       <div className="dashboard__table-user">
                         <div className="dashboard__table-avatar">

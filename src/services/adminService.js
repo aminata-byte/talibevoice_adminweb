@@ -149,6 +149,18 @@ const adminService = {
     const response = await api.post("/admin/notifications", data);
     return response.data;
   },
+
+  // Besoins
+  getBesoins: async (params = {}) => {
+    const response = await api.get("/admin/besoins", { params });
+    return response.data;
+  },
+
+  // Insertions
+  getInsertions: async (params = {}) => {
+    const response = await api.get("/admin/insertions", { params });
+    return response.data;
+  },
 };
 
 export default adminService;
