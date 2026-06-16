@@ -1,4 +1,4 @@
-import { Bell, Search, User } from "lucide-react";
+import { Bell, User } from "lucide-react";
 import "./Header.css";
 
 function Header({ titre }) {
@@ -11,16 +11,6 @@ function Header({ titre }) {
       </div>
 
       <div className="header__right">
-        {/* Recherche */}
-        <div className="header__search">
-          <Search size={16} className="header__search-icon" />
-          <input
-            type="text"
-            placeholder="Rechercher..."
-            className="header__search-input"
-          />
-        </div>
-
         {/* Notifications */}
         <button className="header__notif">
           <Bell size={20} />

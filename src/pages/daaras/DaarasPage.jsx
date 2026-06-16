@@ -3,6 +3,7 @@ import { Search, CheckCircle, XCircle, Eye, Download } from "lucide-react";
 import AdminLayout from "../../components/layout/AdminLayout";
 import adminService from "../../services/adminService";
 import "./DaarasPage.css";
+import { useNavigate } from "react-router-dom";
 
 function DaarasPage() {
   const [daaras, setDaaras] = useState([]);
@@ -10,6 +11,7 @@ function DaarasPage() {
   const [recherche, setRecherche] = useState("");
   const [filtre, setFiltre] = useState("tous");
   const [selectedDaara, setSelectedDaara] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchDaaras();
@@ -161,8 +163,7 @@ function DaarasPage() {
                       <div className="page__actions">
                         <button
                           className="page__action-btn page__action-btn--view"
-                          onClick={() => setSelectedDaara(daara)}
-                          title="Voir détails"
+                          onClick={() => navigate(`/daaras/${daara.id}`)}
                         >
                           <Eye size={16} />
                         </button>

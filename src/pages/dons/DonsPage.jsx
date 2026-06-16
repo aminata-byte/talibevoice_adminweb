@@ -5,7 +5,10 @@ import {
   CheckCircle,
   XCircle,
   Eye,
-  Filter,
+  CreditCard,
+  Package,
+  Info,
+  X,
 } from "lucide-react";
 import AdminLayout from "../../components/layout/AdminLayout";
 import adminService from "../../services/adminService";
@@ -18,13 +21,30 @@ function DonsPage() {
   const [filtre, setFiltre] = useState("tous");
   const [selectedDon, setSelectedDon] = useState(null);
 
+  const donsFinanciers = dons.filter((d) => d.type === "financier");
+  const totalRecu = donsFinanciers.reduce(
+    (acc, d) => acc + (Number(d.montant) || 0),
+    0,
+  );
+  const totalValide = donsFinanciers
+    .filter((d) => d.statut === "valide")
+    .reduce((acc, d) => acc + (Number(d.montant) || 0), 0);
+  const totalEnAttente = donsFinanciers
+    .filter((d) => d.statut === "en_attente")
+    .reduce((acc, d) => acc + (Number(d.montant) || 0), 0);
+  const totalRedistribue = donsFinanciers
+    .filter((d) => d.statut === "redistribue")
+    .reduce((acc, d) => acc + (Number(d.montant) || 0), 0);
+
   const stats = {
-    total: dons.reduce((acc, d) => acc + (d.montant || 0), 0),
-    enAttente: dons.filter((d) => d.statut === "en_attente").length,
-    valides: dons
-      .filter((d) => d.statut === "valide")
-      .reduce((acc, d) => acc + (d.montant || 0), 0),
-    redistribues: 0,
+    total: totalRecu,
+    nbEnAttente: dons.filter((d) => d.statut === "en_attente").length,
+    enAttente: totalEnAttente,
+    valides: totalValide,
+    pctValides: totalRecu > 0 ? Math.round((totalValide / totalRecu) * 100) : 0,
+    redistribues: totalRedistribue,
+    pctRedistribues:
+      totalValide > 0 ? Math.round((totalRedistribue / totalValide) * 100) : 0,
   };
 
   useEffect(() => {
@@ -63,10 +83,11 @@ function DonsPage() {
   };
 
   const donsFiltres = dons.filter((d) => {
+    const terme = recherche.toLowerCase();
     const matchRecherche =
-      d.donateur?.nom?.toLowerCase().includes(recherche.toLowerCase()) ||
-      d.donateur?.prenom?.toLowerCase().includes(recherche.toLowerCase()) ||
-      true;
+      terme === "" ||
+      d.donateur?.nom?.toLowerCase().includes(terme) ||
+      d.donateur?.prenom?.toLowerCase().includes(terme);
     const matchFiltre = filtre === "tous" || d.statut === filtre;
     return matchRecherche && matchFiltre;
   });
@@ -99,9 +120,14 @@ function DonsPage() {
     );
   };
 
+  // Évolution mensuelle des dons financiers calculée depuis les vraies données
   const moisLabels = ["Jan", "Fév", "Mar", "Avr", "Mai", "Jun"];
-  const moisData = [850000, 1200000, 980000, 1500000, 2100000, 4200000];
-  const maxVal = Math.max(...moisData);
+  const moisData = moisLabels.map((_, index) =>
+    donsFinanciers
+      .filter((d) => new Date(d.created_at).getMonth() === index)
+      .reduce((acc, d) => acc + (Number(d.montant) || 0), 0),
+  );
+  const maxVal = Math.max(...moisData, 1);
 
   return (
     <AdminLayout titre="Dons">
@@ -127,7 +153,7 @@ function DonsPage() {
           <div className="dons__stat-card">
             <div className="dons__stat-top">
               <span className="dons__stat-badge dons__stat-badge--green">
-                +12% vs mois dernier
+                {donsFinanciers.length} dons reçus
               </span>
             </div>
             <p className="dons__stat-label">Total reçu</p>
@@ -138,18 +164,18 @@ function DonsPage() {
           <div className="dons__stat-card">
             <div className="dons__stat-top">
               <span className="dons__stat-badge dons__stat-badge--yellow">
-                {stats.enAttente} dossiers
+                {stats.nbEnAttente} dossiers
               </span>
             </div>
             <p className="dons__stat-label">En attente</p>
             <p className="dons__stat-value">
-              {((stats.enAttente * 50000) / 1000000).toFixed(1)}M FCFA
+              {(stats.enAttente / 1000000).toFixed(1)}M FCFA
             </p>
           </div>
           <div className="dons__stat-card">
             <div className="dons__stat-top">
               <span className="dons__stat-badge dons__stat-badge--green">
-                92% validés
+                {stats.pctValides}% validés
               </span>
             </div>
             <p className="dons__stat-label">Validés</p>
@@ -160,11 +186,13 @@ function DonsPage() {
           <div className="dons__stat-card">
             <div className="dons__stat-top">
               <span className="dons__stat-badge dons__stat-badge--blue">
-                68% redistribués
+                {stats.pctRedistribues}% redistribués
               </span>
             </div>
             <p className="dons__stat-label">Redistribués</p>
-            <p className="dons__stat-value">8.5M FCFA</p>
+            <p className="dons__stat-value">
+              {(stats.redistribues / 1000000).toFixed(1)}M FCFA
+            </p>
           </div>
         </div>
 
@@ -177,10 +205,6 @@ function DonsPage() {
             <div className="dons__chart-legend">
               <span className="dons__chart-dot"></span>
               <span>Dons Financiers</span>
-              <select className="talibes__select">
-                <option>2024</option>
-                <option>2025</option>
-              </select>
             </div>
           </div>
           <div className="dons__chart">
@@ -204,11 +228,6 @@ function DonsPage() {
             <h3 className="dons__chart-title">
               Liste des transactions récentes
             </h3>
-            <div className="dons__table-actions">
-              <button className="page__action-btn page__action-btn--view">
-                <Filter size={16} />
-              </button>
-            </div>
           </div>
 
           <div className="page__filters" style={{ marginBottom: "1rem" }}>
@@ -287,9 +306,15 @@ function DonsPage() {
                     </td>
                     <td>
                       <span className="dons__type">
-                        {don.type === "financier"
-                          ? "💳 Financier"
-                          : "📦 Matériel"}
+                        {don.type === "financier" ? (
+                          <>
+                            <CreditCard size={14} /> Financier
+                          </>
+                        ) : (
+                          <>
+                            <Package size={14} /> Matériel
+                          </>
+                        )}
                       </span>
                     </td>
                     <td>
@@ -353,14 +378,12 @@ function DonsPage() {
 
         {/* Info redistribution */}
         <div className="dons__info">
-          <span className="dons__info-icon">ℹ️</span>
+          <Info size={20} className="dons__info-icon" />
           <div>
             <p className="dons__info-title">Information de redistribution</p>
             <p className="dons__info-text">
               Tout don financier marqué comme "Validé" devient éligible pour la
-              redistribution. Vous pouvez planifier l'allocation vers les Daaras
-              via le bouton Planifier redistribution qui apparaîtra lors de la
-              validation d'un nouveau don.
+              redistribution vers les Daaras.
             </p>
           </div>
         </div>
@@ -378,7 +401,7 @@ function DonsPage() {
                 className="modal__close"
                 onClick={() => setSelectedDon(null)}
               >
-                ✕
+                <X size={18} />
               </button>
             </div>
             <div className="modal__body">
