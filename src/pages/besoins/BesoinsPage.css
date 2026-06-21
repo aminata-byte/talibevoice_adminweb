@@ -4,46 +4,6 @@
   gap: 1.5rem;
 }
 
-.besoins__header-right {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.besoins__location {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: var(--text-secondary);
-  background-color: var(--white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 8px 12px;
-}
-
-.besoins__view-toggle {
-  display: flex;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-}
-
-.besoins__view-btn {
-  padding: 8px 14px;
-  font-size: 13px;
-  background-color: var(--white);
-  color: var(--text-secondary);
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.besoins__view-btn--active {
-  background-color: var(--primary);
-  color: var(--white);
-}
-
 /* Kanban */
 .besoins__kanban {
   display: grid;
@@ -64,7 +24,7 @@
 .besoins__column-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
   padding: 0.75rem 1rem;
   font-size: 13px;
   font-weight: 700;
@@ -95,6 +55,7 @@
   align-items: center;
   justify-content: center;
   font-size: 12px;
+  margin-left: auto;
 }
 
 .besoins__column-body {
@@ -112,8 +73,8 @@
   padding: 1rem 0;
 }
 
-/* Kanban card */
-.besoin__kanban-card {
+/* Card */
+.besoin__card {
   background-color: var(--white);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -124,95 +85,106 @@
   transition: box-shadow 0.2s;
 }
 
-.besoin__kanban-card:hover {
+.besoin__card:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.besoin__kanban-header {
+.besoin__card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.besoin__kanban-daara {
+.besoin__card-daara {
   font-size: 12px;
   font-weight: 600;
   color: var(--text-primary);
 }
 
-.besoin__kanban-date {
+.besoin__card-date {
   font-size: 11px;
-  color: var(--text-light);
+  color: var(--text-secondary);
 }
 
-.besoin__kanban-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--primary-dark);
-}
-
-.besoin__kanban-type {
-  font-size: 11px;
+.besoin__card-type {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
-.besoin__kanban-desc {
+.besoin__card-desc {
   font-size: 12px;
   color: var(--text-secondary);
   line-height: 1.5;
 }
 
-.besoin__kanban-footer {
+.besoin__card-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-top: 4px;
 }
 
-.besoin__kanban-avatar {
-  width: 24px;
-  height: 24px;
-  background-color: var(--primary);
-  border-radius: 50%;
+.besoin__card-select {
+  font-size: 12px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--background);
+  color: var(--text-primary);
+  cursor: pointer;
+  outline: none;
+}
+
+.besoin__card-select:focus {
+  border-color: var(--primary);
+}
+
+.besoin__card-delete {
+  background: none;
+  border: none;
+  color: #dc2626;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: var(--white);
-  font-size: 11px;
-  font-weight: 700;
+  transition: background 0.15s;
 }
 
-.besoin__kanban-detail {
-  background: transparent;
-  border: none;
-  font-size: 12px;
-  color: var(--primary);
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.besoins__add-btn {
-  background: transparent;
-  border: 1px dashed var(--border);
-  border-radius: var(--radius-md);
-  padding: 8px;
-  font-size: 13px;
-  color: var(--text-secondary);
-  cursor: pointer;
-  width: 100%;
-  transition: all 0.2s;
-}
-
-.besoins__add-btn:hover {
-  border-color: var(--primary);
-  color: var(--primary);
+.besoin__card-delete:hover {
+  background: rgba(220, 38, 38, 0.1);
 }
 
 @media (max-width: 768px) {
   .besoins__kanban {
     grid-template-columns: 1fr;
   }
+}
+
+.besoin__card-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.besoin__card-resoudre {
+  background: none;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  transition: background 0.15s;
+}
+
+.besoin__card-resoudre:hover {
+  background: rgba(20, 90, 50, 0.1);
 }

@@ -168,6 +168,16 @@ const adminService = {
     const response = await api.post(`/admin/daaras/${id}/desactiver`);
     return response.data;
   },
+
+  deleteBesoin: async (id) => {
+    const response = await api.delete(`/admin/besoins/${id}`);
+    return response.data;
+  },
+
+  resoudreBesoin: async (id) => {
+    const response = await api.post(`/admin/besoins/${id}/resoudre`);
+    return response.data;
+  },
 };
 
 export default adminService;
