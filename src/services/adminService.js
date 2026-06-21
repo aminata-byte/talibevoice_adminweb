@@ -164,6 +164,15 @@ const adminService = {
     const response = await api.post(`/admin/daaras/${id}/activer`);
     return response.data;
   },
+
+  desactiverFormation: async (id) => {
+    const response = await api.post(`/admin/formations/${id}/desactiver`);
+    return response.data;
+  },
+  deleteFormation: async (id) => {
+    const response = await api.delete(`/admin/formations/${id}`);
+    return response.data;
+  },
   desactiverDaara: async (id) => {
     const response = await api.post(`/admin/daaras/${id}/desactiver`);
     return response.data;
