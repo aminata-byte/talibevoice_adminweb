@@ -159,6 +159,15 @@ const adminService = {
     const response = await api.get("/admin/insertions", { params });
     return response.data;
   },
+
+  activerDaara: async (id) => {
+    const response = await api.post(`/admin/daaras/${id}/activer`);
+    return response.data;
+  },
+  desactiverDaara: async (id) => {
+    const response = await api.post(`/admin/daaras/${id}/desactiver`);
+    return response.data;
+  },
 };
 
 export default adminService;
