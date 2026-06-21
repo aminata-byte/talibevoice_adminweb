@@ -262,3 +262,130 @@
     position: static;
   }
 }
+
+/* Bouton supprimer dans le profil */
+.talibes__profil-btn--delete {
+  background-color: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+}
+
+.talibes__profil-btn--delete:hover {
+  background-color: rgba(220, 38, 38, 0.2);
+}
+
+/* Bouton delete dans la table */
+.page__action-btn--delete {
+  color: #dc2626;
+}
+
+.page__action-btn--delete:hover {
+  background-color: rgba(220, 38, 38, 0.1);
+}
+
+/* Pagination disabled */
+.talibes__page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Modal */
+.modal__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.modal__close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+}
+
+.modal__close:hover {
+  color: var(--text-primary);
+}
+
+.modal__body {
+  padding: 1.25rem;
+}
+
+.modal__confirm-text {
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.modal__footer {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.modal__btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s;
+}
+
+.modal__btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.modal__btn--cancel {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+}
+
+.modal__btn--danger {
+  background: #dc2626;
+  color: white;
+}
+
+.modal__btn:not(:disabled):hover {
+  opacity: 0.85;
+}

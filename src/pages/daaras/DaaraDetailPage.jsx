@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   CheckCircle,
@@ -20,11 +20,7 @@ function DaaraDetailPage() {
   const [activeTab, setActiveTab] = useState("talibes");
   const [recherche, setRecherche] = useState("");
 
-  useEffect(() => {
-    fetchDaara();
-  }, [id]);
-
-  const fetchDaara = async () => {
+  const fetchDaara = useCallback(async () => {
     setLoading(true);
     try {
       const data = await adminService.getDaara(id);
@@ -34,7 +30,11 @@ function DaaraDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchDaara();
+  }, [fetchDaara]);
 
   const handleValider = async () => {
     try {
@@ -88,7 +88,6 @@ function DaaraDetailPage() {
   return (
     <AdminLayout titre={`Daaras / ${daara.nom}`}>
       <div className="daara-detail">
-        {/* Actions header */}
         <div className="daara-detail__actions">
           <nav className="daara-detail__breadcrumb">
             <span
@@ -117,20 +116,16 @@ function DaaraDetailPage() {
               </button>
             )}
             <button className="daara-detail__btn daara-detail__btn--activer">
-              <CheckCircle size={16} />
-              Activer
+              <CheckCircle size={16} /> Activer
             </button>
             <button className="daara-detail__btn daara-detail__btn--desactiver">
-              <XCircle size={16} />
-              Désactiver
+              <XCircle size={16} /> Désactiver
             </button>
           </div>
         </div>
 
         <div className="daara-detail__layout">
-          {/* Gauche */}
           <div className="daara-detail__left">
-            {/* Card info */}
             <div className="daara-detail__card">
               <div className="daara-detail__card-header">
                 <div className="daara-detail__card-icon">
@@ -206,11 +201,9 @@ function DaaraDetailPage() {
               </div>
             </div>
 
-            {/* Carte localisation */}
             <div className="daara-detail__map-card">
               <h3 className="daara-detail__map-title">
-                <MapPin size={16} />
-                Localisation
+                <MapPin size={16} /> Localisation
               </h3>
               <div className="daara-detail__map">
                 <div className="daara-detail__map-placeholder">
@@ -225,7 +218,6 @@ function DaaraDetailPage() {
             </div>
           </div>
 
-          {/* Droite — Tabs */}
           <div className="daara-detail__right">
             <div className="daara-detail__tabs">
               {[
@@ -243,7 +235,6 @@ function DaaraDetailPage() {
               ))}
             </div>
 
-            {/* Talibés */}
             {activeTab === "talibes" && (
               <div className="daara-detail__tab-content">
                 <input
@@ -306,7 +297,6 @@ function DaaraDetailPage() {
               </div>
             )}
 
-            {/* Besoins */}
             {activeTab === "besoins" && (
               <div className="daara-detail__tab-content">
                 {besoins.length === 0 ? (
@@ -343,7 +333,6 @@ function DaaraDetailPage() {
               </div>
             )}
 
-            {/* Rapports */}
             {activeTab === "rapports" && (
               <div className="daara-detail__tab-content">
                 {rapports.length === 0 ? (

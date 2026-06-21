@@ -10,7 +10,12 @@ export function AdminAuthProvider({ children }) {
     const stored = localStorage.getItem("admin");
     const token = localStorage.getItem("admin_token");
     if (stored && token) {
-      setAdmin(JSON.parse(stored));
+      try {
+        setAdmin(JSON.parse(stored));
+      } catch {
+        localStorage.removeItem("admin");
+        localStorage.removeItem("admin_token");
+      }
     }
     setLoading(false);
   }, []);
@@ -58,7 +63,7 @@ export function AdminAuthProvider({ children }) {
   };
 
   const isAuthenticated = () => {
-    return !!admin && !!localStorage.getItem("admin_token");
+    return !!localStorage.getItem("admin_token");
   };
 
   return (

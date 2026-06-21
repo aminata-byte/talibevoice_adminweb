@@ -1,15 +1,23 @@
-import { useState, useEffect } from "react";
-import { Search, Eye, Edit, Download } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { Search, Eye, Trash2, Download, X } from "lucide-react";
 import AdminLayout from "../../components/layout/AdminLayout";
 import adminService from "../../services/adminService";
 import "./TalibesPage.css";
+
+const ITEMS_PAR_PAGE = 10;
 
 function TalibesPage() {
   const [talibes, setTalibes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [recherche, setRecherche] = useState("");
+  const [filtreRegion, setFiltreRegion] = useState("");
+  const [filtreStatut, setFiltreStatut] = useState("");
   const [filtreMajeur, setFiltreMajeur] = useState(false);
   const [selectedTalibe, setSelectedTalibe] = useState(null);
+  const [page, setPage] = useState(1);
+  const [modalSuppr, setModalSuppr] = useState(false);
+  const [talibeASupprimer, setTalibeASupprimer] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     fetchTalibes();
@@ -19,7 +27,7 @@ function TalibesPage() {
     setLoading(true);
     try {
       const data = await adminService.getTalibes();
-      setTalibes(data);
+      setTalibes(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -27,13 +35,41 @@ function TalibesPage() {
     }
   };
 
-  const talibesFiltres = talibes.filter((t) => {
-    const matchRecherche = `${t.nom} ${t.prenom}`
-      .toLowerCase()
-      .includes(recherche.toLowerCase());
-    const matchMajeur = !filtreMajeur || t.est_majeur;
-    return matchRecherche && matchMajeur;
-  });
+  // Régions dynamiques depuis les données
+  const regions = useMemo(() => {
+    const set = new Set(talibes.map((t) => t.daara?.region).filter(Boolean));
+    return [...set].sort();
+  }, [talibes]);
+
+  // Filtrage
+  const talibesFiltres = useMemo(() => {
+    return talibes.filter((t) => {
+      const matchRecherche =
+        recherche === "" ||
+        `${t.nom} ${t.prenom}`.toLowerCase().includes(recherche.toLowerCase());
+      const matchRegion =
+        filtreRegion === "" || t.daara?.region === filtreRegion;
+      const matchStatut =
+        filtreStatut === "" || t.statut_insertion === filtreStatut;
+      const matchMajeur = !filtreMajeur || t.est_majeur;
+      return matchRecherche && matchRegion && matchStatut && matchMajeur;
+    });
+  }, [talibes, recherche, filtreRegion, filtreStatut, filtreMajeur]);
+
+  // Reset page si filtre change
+  useEffect(() => {
+    setPage(1);
+  }, [recherche, filtreRegion, filtreStatut, filtreMajeur]);
+
+  // Pagination
+  const totalPages = Math.max(
+    1,
+    Math.ceil(talibesFiltres.length / ITEMS_PAR_PAGE),
+  );
+  const talibesPage = talibesFiltres.slice(
+    (page - 1) * ITEMS_PAR_PAGE,
+    page * ITEMS_PAR_PAGE,
+  );
 
   const getInsertionClass = (statut) => {
     if (statut === "insere") return "badge badge--green";
@@ -54,6 +90,27 @@ function TalibesPage() {
     const age =
       new Date().getFullYear() - new Date(dateNaissance).getFullYear();
     return `${age} ans`;
+  };
+
+  // Suppression
+  const ouvrirSuppr = (talibe, e) => {
+    e.stopPropagation();
+    setTalibeASupprimer(talibe);
+    setModalSuppr(true);
+  };
+
+  const confirmerSuppr = async () => {
+    setDeleting(true);
+    try {
+      await adminService.deleteTalibe(talibeASupprimer.id);
+      setTalibes((prev) => prev.filter((t) => t.id !== talibeASupprimer.id));
+      if (selectedTalibe?.id === talibeASupprimer.id) setSelectedTalibe(null);
+      setModalSuppr(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setDeleting(false);
+    }
   };
 
   return (
@@ -84,30 +141,39 @@ function TalibesPage() {
                 <Search size={16} />
                 <input
                   type="text"
-                  placeholder="Rechercher..."
+                  placeholder="Rechercher par nom ou prénom..."
                   value={recherche}
                   onChange={(e) => setRecherche(e.target.value)}
                   className="page__search-input"
                 />
               </div>
-              <select className="talibes__select">
-                <option>Toutes les zones</option>
-                <option>Dakar</option>
-                <option>Thiès</option>
-                <option>Louga</option>
-                <option>Saint-Louis</option>
+
+              <select
+                className="talibes__select"
+                value={filtreRegion}
+                onChange={(e) => setFiltreRegion(e.target.value)}
+              >
+                <option value="">Toutes les régions</option>
+                {regions.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
+                ))}
               </select>
-              <select className="talibes__select">
-                <option>Tous les id</option>
+
+              <select
+                className="talibes__select"
+                value={filtreStatut}
+                onChange={(e) => setFiltreStatut(e.target.value)}
+              >
+                <option value="">Tous statuts</option>
+                <option value="insere">Validée</option>
+                <option value="en_cours">En cours</option>
+                <option value="en_attente">En attente</option>
               </select>
-              <select className="talibes__select">
-                <option>Tous statuts</option>
-                <option>En cours</option>
-                <option>Validée</option>
-                <option>Aucune</option>
-              </select>
+
               <div className="talibes__toggle">
-                <span>Majeurs</span>
+                <span>Majeurs seulement</span>
                 <label className="talibes__switch">
                   <input
                     type="checkbox"
@@ -128,7 +194,7 @@ function TalibesPage() {
                     <th>Prénom</th>
                     <th>Âge</th>
                     <th>Daara</th>
-                    <th>Zone</th>
+                    <th>Région</th>
                     <th>État civil</th>
                     <th>Statut insertion</th>
                     <th>Actions</th>
@@ -141,14 +207,14 @@ function TalibesPage() {
                         Chargement...
                       </td>
                     </tr>
-                  ) : talibesFiltres.length === 0 ? (
+                  ) : talibesPage.length === 0 ? (
                     <tr>
                       <td colSpan="8" className="page__table-empty">
                         Aucun talibé trouvé.
                       </td>
                     </tr>
                   ) : (
-                    talibesFiltres.map((talibe) => (
+                    talibesPage.map((talibe) => (
                       <tr
                         key={talibe.id}
                         className={
@@ -190,15 +256,20 @@ function TalibesPage() {
                           <div className="page__actions">
                             <button
                               className="page__action-btn page__action-btn--view"
+                              title="Voir le profil"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setSelectedTalibe(talibe);
                               }}
                             >
-                              <Eye size={16} />
+                              <Eye size={15} />
                             </button>
-                            <button className="page__action-btn page__action-btn--validate">
-                              <Edit size={16} />
+                            <button
+                              className="page__action-btn page__action-btn--delete"
+                              title="Supprimer"
+                              onClick={(e) => ouvrirSuppr(talibe, e)}
+                            >
+                              <Trash2 size={15} />
                             </button>
                           </div>
                         </td>
@@ -212,17 +283,39 @@ function TalibesPage() {
             {/* Pagination */}
             <div className="talibes__pagination">
               <span>
-                Affichage 1-{Math.min(talibesFiltres.length, 10)} sur{" "}
-                {talibesFiltres.length} talibés
+                {talibesFiltres.length === 0
+                  ? "Aucun résultat"
+                  : `Affichage ${(page - 1) * ITEMS_PAR_PAGE + 1}–${Math.min(
+                      page * ITEMS_PAR_PAGE,
+                      talibesFiltres.length,
+                    )} sur ${talibesFiltres.length} talibés`}
               </span>
               <div className="talibes__pages">
-                <button className="talibes__page-btn">‹</button>
-                <button className="talibes__page-btn talibes__page-btn--active">
-                  1
+                <button
+                  className="talibes__page-btn"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                >
+                  ‹
                 </button>
-                <button className="talibes__page-btn">2</button>
-                <button className="talibes__page-btn">3</button>
-                <button className="talibes__page-btn">›</button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (p) => (
+                    <button
+                      key={p}
+                      className={`talibes__page-btn${page === p ? " talibes__page-btn--active" : ""}`}
+                      onClick={() => setPage(p)}
+                    >
+                      {p}
+                    </button>
+                  ),
+                )}
+                <button
+                  className="talibes__page-btn"
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                >
+                  ›
+                </button>
               </div>
             </div>
           </div>
@@ -232,7 +325,6 @@ function TalibesPage() {
             <div className="talibes__profil">
               <h3 className="talibes__profil-title">Profil talibé</h3>
 
-              {/* Avatar */}
               <div className="talibes__profil-avatar">
                 <div className="talibes__profil-initiales">
                   {selectedTalibe.prenom?.[0]}
@@ -254,7 +346,6 @@ function TalibesPage() {
                 {selectedTalibe.prenom} {selectedTalibe.nom}
               </p>
 
-              {/* Infos */}
               <div className="talibes__profil-infos">
                 <div className="talibes__profil-info">
                   <span className="talibes__profil-label">DAARA</span>
@@ -303,8 +394,11 @@ function TalibesPage() {
                 </div>
               </div>
 
-              <button className="talibes__profil-btn">
-                Voir profil complet
+              <button
+                className="talibes__profil-btn talibes__profil-btn--delete"
+                onClick={(e) => ouvrirSuppr(selectedTalibe, e)}
+              >
+                <Trash2 size={15} /> Supprimer
               </button>
             </div>
           ) : (
@@ -314,6 +408,51 @@ function TalibesPage() {
           )}
         </div>
       </div>
+
+      {/* Modal suppression */}
+      {modalSuppr && (
+        <div className="modal__overlay" onClick={() => setModalSuppr(false)}>
+          <div
+            className="modal modal--small"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal__header">
+              <h3 className="modal__title">Confirmer la suppression</h3>
+              <button
+                className="modal__close"
+                onClick={() => setModalSuppr(false)}
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="modal__body">
+              <p className="modal__confirm-text">
+                Êtes-vous sûr de vouloir supprimer le talibé{" "}
+                <strong>
+                  {talibeASupprimer?.prenom} {talibeASupprimer?.nom}
+                </strong>{" "}
+                ? Cette action est irréversible.
+              </p>
+            </div>
+            <div className="modal__footer">
+              <button
+                className="modal__btn modal__btn--cancel"
+                onClick={() => setModalSuppr(false)}
+              >
+                Annuler
+              </button>
+              <button
+                className="modal__btn modal__btn--danger"
+                onClick={confirmerSuppr}
+                disabled={deleting}
+              >
+                <Trash2 size={15} />
+                {deleting ? "Suppression..." : "Supprimer"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AdminLayout>
   );
 }

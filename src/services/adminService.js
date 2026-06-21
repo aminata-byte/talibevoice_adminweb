@@ -42,8 +42,8 @@ const adminService = {
     const response = await api.get(`/admin/talibes/${id}`);
     return response.data;
   },
-  updateTalibe: async (id, data) => {
-    const response = await api.put(`/admin/talibes/${id}`, data);
+  deleteTalibe: async (id) => {
+    const response = await api.delete(`/admin/talibes/${id}`);
     return response.data;
   },
 
@@ -91,9 +91,7 @@ const adminService = {
   inscrireTalibe: async (formationId, talibeId) => {
     const response = await api.post(
       `/admin/formations/${formationId}/inscrire-talibe`,
-      {
-        talibe_id: talibeId,
-      },
+      { talibe_id: talibeId },
     );
     return response.data;
   },
