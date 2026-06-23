@@ -7,7 +7,7 @@ import TalibesPage from "./pages/talibes/TalibesPage";
 import BesoinsPage from "./pages/besoins/BesoinsPage";
 import DonsPage from "./pages/dons/DonsPage";
 import FormationsPage from "./pages/formations/FormationsPage";
-import OffresPage from "./pages/offres/OffresPage";
+
 import NotificationsPage from "./pages/notifications/NotificationsPage";
 import RapportsPage from "./pages/rapports/RapportsPage";
 import UtilisateursPage from "./pages/utilisateurs/UtilisateursPage";
@@ -71,14 +71,6 @@ function App() {
           }
         />
         <Route
-          path="/offres"
-          element={
-            <ProtectedRoute>
-              <OffresPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
           path="/notifications"
           element={
             <ProtectedRoute>
@@ -128,8 +120,6 @@ function App() {
         />
 
         <Route path="*" element={<Navigate to="/login" replace />} />
-
-        
       </Routes>
     </BrowserRouter>
   );

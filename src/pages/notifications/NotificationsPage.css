@@ -199,4 +199,29 @@
   .notifs__stats {
     grid-template-columns: 1fr;
   }
+
+    .notifs__success {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+  
+    .notifs__radio-group {
+      display: flex;
+      gap: 1.5rem;
+    }
+  
+    .notifs__radio {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-primary);
+      cursor: pointer;
+    }
 }
+
