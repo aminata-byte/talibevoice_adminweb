@@ -16,20 +16,20 @@ const adminService = {
     const response = await api.get(`/admin/daaras/${id}`);
     return response.data;
   },
-  createDaara: async (data) => {
-    const response = await api.post("/admin/daaras", data);
-    return response.data;
-  },
-  updateDaara: async (id, data) => {
-    const response = await api.put(`/admin/daaras/${id}`, data);
-    return response.data;
-  },
   deleteDaara: async (id) => {
     const response = await api.delete(`/admin/daaras/${id}`);
     return response.data;
   },
   validerDaara: async (id) => {
     const response = await api.post(`/admin/daaras/${id}/valider`);
+    return response.data;
+  },
+  activerDaara: async (id) => {
+    const response = await api.post(`/admin/daaras/${id}/activer`);
+    return response.data;
+  },
+  desactiverDaara: async (id) => {
+    const response = await api.post(`/admin/daaras/${id}/desactiver`);
     return response.data;
   },
 
@@ -44,6 +44,20 @@ const adminService = {
   },
   deleteTalibe: async (id) => {
     const response = await api.delete(`/admin/talibes/${id}`);
+    return response.data;
+  },
+
+  // Besoins
+  getBesoins: async (params = {}) => {
+    const response = await api.get("/admin/besoins", { params });
+    return response.data;
+  },
+  deleteBesoin: async (id) => {
+    const response = await api.delete(`/admin/besoins/${id}`);
+    return response.data;
+  },
+  resoudreBesoin: async (id) => {
+    const response = await api.post(`/admin/besoins/${id}/resoudre`);
     return response.data;
   },
 
@@ -74,6 +88,22 @@ const adminService = {
     const response = await api.get("/admin/partenaires", { params });
     return response.data;
   },
+  getPartenaire: async (id) => {
+    const response = await api.get(`/admin/partenaires/${id}`);
+    return response.data;
+  },
+  validerPartenaire: async (id) => {
+    const response = await api.post(`/admin/partenaires/${id}/valider`);
+    return response.data;
+  },
+  rejeterPartenaire: async (id) => {
+    const response = await api.post(`/admin/partenaires/${id}/rejeter`);
+    return response.data;
+  },
+  deletePartenaire: async (id) => {
+    const response = await api.delete(`/admin/partenaires/${id}`);
+    return response.data;
+  },
 
   // Formations
   getFormations: async (params = {}) => {
@@ -88,6 +118,14 @@ const adminService = {
     const response = await api.post(`/admin/formations/${id}/activer`);
     return response.data;
   },
+  desactiverFormation: async (id) => {
+    const response = await api.post(`/admin/formations/${id}/desactiver`);
+    return response.data;
+  },
+  deleteFormation: async (id) => {
+    const response = await api.delete(`/admin/formations/${id}`);
+    return response.data;
+  },
   inscrireTalibe: async (formationId, talibeId) => {
     const response = await api.post(
       `/admin/formations/${formationId}/inscrire-talibe`,
@@ -96,7 +134,21 @@ const adminService = {
     return response.data;
   },
 
-  // Agents
+  // Insertions
+  getInsertions: async (params = {}) => {
+    const response = await api.get("/admin/insertions", { params });
+    return response.data;
+  },
+  validerInsertion: async (id) => {
+    const response = await api.post(`/admin/insertions/${id}/valider`);
+    return response.data;
+  },
+  cloturerInsertion: async (id) => {
+    const response = await api.post(`/admin/insertions/${id}/cloturer`);
+    return response.data;
+  },
+
+  // Agents / Utilisateurs
   getAgents: async () => {
     const response = await api.get("/admin/utilisateurs");
     return response.data;
@@ -145,46 +197,6 @@ const adminService = {
   },
   sendNotification: async (data) => {
     const response = await api.post("/admin/notifications", data);
-    return response.data;
-  },
-
-  // Besoins
-  getBesoins: async (params = {}) => {
-    const response = await api.get("/admin/besoins", { params });
-    return response.data;
-  },
-
-  // Insertions
-  getInsertions: async (params = {}) => {
-    const response = await api.get("/admin/insertions", { params });
-    return response.data;
-  },
-
-  activerDaara: async (id) => {
-    const response = await api.post(`/admin/daaras/${id}/activer`);
-    return response.data;
-  },
-
-  desactiverFormation: async (id) => {
-    const response = await api.post(`/admin/formations/${id}/desactiver`);
-    return response.data;
-  },
-  deleteFormation: async (id) => {
-    const response = await api.delete(`/admin/formations/${id}`);
-    return response.data;
-  },
-  desactiverDaara: async (id) => {
-    const response = await api.post(`/admin/daaras/${id}/desactiver`);
-    return response.data;
-  },
-
-  deleteBesoin: async (id) => {
-    const response = await api.delete(`/admin/besoins/${id}`);
-    return response.data;
-  },
-
-  resoudreBesoin: async (id) => {
-    const response = await api.post(`/admin/besoins/${id}/resoudre`);
     return response.data;
   },
 };

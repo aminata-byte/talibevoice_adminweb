@@ -1,4 +1,595 @@
+import { useState, useEffect, useMemo } from "react";
+import {
+  Search,
+  CheckCircle,
+  XCircle,
+  Trash2,
+  X,
+  Globe,
+  Phone,
+  Mail,
+} from "lucide-react";
+import AdminLayout from "../../components/layout/AdminLayout";
+import adminService from "../../services/adminService";
+import "./PartenairesPage.css";
+
+const ITEMS_PAR_PAGE = 10;
+
 function PartenairesPage() {
-  return <div>PartenairesPage</div>;
+  const [partenaires, setPartenaires] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [recherche, setRecherche] = useState("");
+  const [filtre, setFiltre] = useState("tous");
+  const [page, setPage] = useState(1);
+  const [selectedPartenaire, setSelectedPartenaire] = useState(null);
+  const [loadingDetail, setLoadingDetail] = useState(false);
+  const [modalSuppr, setModalSuppr] = useState(false);
+  const [partenaireASupprimer, setPartenaireASupprimer] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+  const [modalRejeter, setModalRejeter] = useState(false);
+  const [partenaireARejeter, setPartenaireARejeter] = useState(null);
+  const [rejeting, setRejeting] = useState(false);
+
+  useEffect(() => {
+    fetchPartenaires();
+  }, []);
+
+  const fetchPartenaires = async () => {
+    setLoading(true);
+    try {
+      const data = await adminService.getPartenaires();
+      setPartenaires(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const selectPartenaire = async (partenaire) => {
+    setLoadingDetail(true);
+    try {
+      const detail = await adminService.getPartenaire(partenaire.id);
+      setSelectedPartenaire(detail);
+    } catch {
+      setSelectedPartenaire(partenaire);
+    } finally {
+      setLoadingDetail(false);
+    }
+  };
+
+  const handleValider = async (id) => {
+    try {
+      await adminService.validerPartenaire(id);
+      setPartenaires((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, statut: "valide" } : p)),
+      );
+      if (selectedPartenaire?.id === id)
+        setSelectedPartenaire((p) => ({ ...p, statut: "valide" }));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const ouvrirRejeter = (partenaire, e) => {
+    e.stopPropagation();
+    setPartenaireARejeter(partenaire);
+    setModalRejeter(true);
+  };
+
+  const confirmerRejeter = async () => {
+    setRejeting(true);
+    try {
+      await adminService.rejeterPartenaire(partenaireARejeter.id);
+      setPartenaires((prev) =>
+        prev.map((p) =>
+          p.id === partenaireARejeter.id ? { ...p, statut: "rejete" } : p,
+        ),
+      );
+      if (selectedPartenaire?.id === partenaireARejeter.id) {
+        setSelectedPartenaire((p) => ({ ...p, statut: "rejete" }));
+      }
+      setModalRejeter(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setRejeting(false);
+    }
+  };
+
+  const ouvrirSuppr = (partenaire, e) => {
+    e.stopPropagation();
+    setPartenaireASupprimer(partenaire);
+    setModalSuppr(true);
+  };
+
+  const confirmerSuppr = async () => {
+    setDeleting(true);
+    try {
+      await adminService.deletePartenaire(partenaireASupprimer.id);
+      setPartenaires((prev) =>
+        prev.filter((p) => p.id !== partenaireASupprimer.id),
+      );
+      if (selectedPartenaire?.id === partenaireASupprimer.id)
+        setSelectedPartenaire(null);
+      setModalSuppr(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const partenairesFilters = useMemo(() => {
+    return partenaires.filter((p) => {
+      const terme = recherche.toLowerCase();
+      const matchRecherche =
+        terme === "" ||
+        p.nom?.toLowerCase().includes(terme) ||
+        p.domaine?.toLowerCase().includes(terme);
+      const matchFiltre = filtre === "tous" || p.statut === filtre;
+      return matchRecherche && matchFiltre;
+    });
+  }, [partenaires, recherche, filtre]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [recherche, filtre]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(partenairesFilters.length / ITEMS_PAR_PAGE),
+  );
+  const partenairesPage = partenairesFilters.slice(
+    (page - 1) * ITEMS_PAR_PAGE,
+    page * ITEMS_PAR_PAGE,
+  );
+
+  const getStatutClass = (statut) => {
+    if (statut === "valide") return "badge badge--green";
+    if (statut === "en_attente") return "badge badge--yellow";
+    return "badge badge--red";
+  };
+
+  const getStatutLabel = (statut) => {
+    if (statut === "valide") return "Validé";
+    if (statut === "en_attente") return "En attente";
+    return "Rejeté";
+  };
+
+  const getFormationStatutClass = (statut) => {
+    if (statut === "actif") return "badge badge--green";
+    if (statut === "en_attente") return "badge badge--yellow";
+    if (statut === "valide") return "badge badge--blue";
+    return "badge badge--gray";
+  };
+
+  const getFormationStatutLabel = (statut) => {
+    if (statut === "actif") return "Active";
+    if (statut === "en_attente") return "En attente";
+    if (statut === "valide") return "Validée";
+    return "Inactive";
+  };
+
+  return (
+    <AdminLayout titre="Partenaires">
+      <div className="partenaires">
+        {/* Header */}
+        <div className="page__header">
+          <div>
+            <h2 className="page__title">
+              Gestion des Partenaires
+              <span className="talibes__count">({partenaires.length})</span>
+            </h2>
+            <p className="page__subtitle">
+              Validez les candidatures et gérez les partenaires de TalibeVoice.
+            </p>
+          </div>
+        </div>
+
+        <div className="partenaires__layout">
+          <div className="partenaires__left">
+            {/* Filtres */}
+            <div className="page__filters">
+              <div className="page__search">
+                <Search size={16} />
+                <input
+                  type="text"
+                  placeholder="Rechercher un partenaire..."
+                  value={recherche}
+                  onChange={(e) => setRecherche(e.target.value)}
+                  className="page__search-input"
+                />
+              </div>
+              <div className="page__tabs">
+                {["tous", "en_attente", "valide", "rejete"].map((f) => (
+                  <button
+                    key={f}
+                    className={`page__tab ${filtre === f ? "active" : ""}`}
+                    onClick={() => setFiltre(f)}
+                  >
+                    {f === "tous"
+                      ? "Tous"
+                      : f === "en_attente"
+                        ? "En attente"
+                        : f === "valide"
+                          ? "Validés"
+                          : "Rejetés"}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Table */}
+            <div className="page__table-container">
+              <table className="page__table">
+                <thead>
+                  <tr>
+                    <th>Nom</th>
+                    <th>Domaine</th>
+                    <th>Contact</th>
+                    <th>Formations</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {loading ? (
+                    <tr>
+                      <td colSpan="6" className="page__table-empty">
+                        Chargement...
+                      </td>
+                    </tr>
+                  ) : partenairesPage.length === 0 ? (
+                    <tr>
+                      <td colSpan="6" className="page__table-empty">
+                        Aucun partenaire trouvé.
+                      </td>
+                    </tr>
+                  ) : (
+                    partenairesPage.map((partenaire) => (
+                      <tr
+                        key={partenaire.id}
+                        className={
+                          selectedPartenaire?.id === partenaire.id
+                            ? "talibes__row--active"
+                            : ""
+                        }
+                        onClick={() => selectPartenaire(partenaire)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <td>
+                          <strong>{partenaire.nom}</strong>
+                        </td>
+                        <td>{partenaire.domaine || "—"}</td>
+                        <td>{partenaire.nom_contact || "—"}</td>
+                        <td>{partenaire.nombre_formations ?? 0} offre(s)</td>
+                        <td>
+                          <span className={getStatutClass(partenaire.statut)}>
+                            {getStatutLabel(partenaire.statut)}
+                          </span>
+                        </td>
+                        <td>
+                          <div className="page__actions">
+                            {partenaire.statut === "en_attente" && (
+                              <>
+                                <button
+                                  className="page__action-btn page__action-btn--validate"
+                                  title="Valider"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleValider(partenaire.id);
+                                  }}
+                                >
+                                  <CheckCircle size={15} />
+                                </button>
+                                <button
+                                  className="page__action-btn page__action-btn--warn"
+                                  title="Rejeter"
+                                  onClick={(e) => ouvrirRejeter(partenaire, e)}
+                                >
+                                  <XCircle size={15} />
+                                </button>
+                              </>
+                            )}
+                            <button
+                              className="page__action-btn page__action-btn--delete"
+                              title="Supprimer"
+                              onClick={(e) => ouvrirSuppr(partenaire, e)}
+                            >
+                              <Trash2 size={15} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination */}
+            <div className="talibes__pagination" style={{ marginTop: "1rem" }}>
+              <span>
+                {partenairesFilters.length === 0
+                  ? "Aucun résultat"
+                  : `Affichage ${(page - 1) * ITEMS_PAR_PAGE + 1}–${Math.min(
+                      page * ITEMS_PAR_PAGE,
+                      partenairesFilters.length,
+                    )} sur ${partenairesFilters.length} partenaires`}
+              </span>
+              <div className="talibes__pages">
+                <button
+                  className="talibes__page-btn"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                >
+                  ‹
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (p) => (
+                    <button
+                      key={p}
+                      className={`talibes__page-btn${page === p ? " talibes__page-btn--active" : ""}`}
+                      onClick={() => setPage(p)}
+                    >
+                      {p}
+                    </button>
+                  ),
+                )}
+                <button
+                  className="talibes__page-btn"
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                >
+                  ›
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Droite — Profil */}
+          {selectedPartenaire ? (
+            <div className="talibes__profil">
+              <h3 className="talibes__profil-title">Détail partenaire</h3>
+
+              {loadingDetail ? (
+                <p
+                  style={{
+                    color: "var(--text-secondary)",
+                    fontSize: "13px",
+                    textAlign: "center",
+                  }}
+                >
+                  Chargement...
+                </p>
+              ) : (
+                <>
+                  <div className="talibes__profil-avatar">
+                    <div className="talibes__profil-initiales">
+                      {selectedPartenaire.nom?.[0]}
+                    </div>
+                    <span className={getStatutClass(selectedPartenaire.statut)}>
+                      {getStatutLabel(selectedPartenaire.statut)}
+                    </span>
+                  </div>
+
+                  <p className="talibes__profil-name">
+                    {selectedPartenaire.nom}
+                  </p>
+
+                  <div className="talibes__profil-infos">
+                    <div className="talibes__profil-info">
+                      <span className="talibes__profil-label">DOMAINE</span>
+                      <span className="talibes__profil-value">
+                        {selectedPartenaire.domaine || "—"}
+                      </span>
+                    </div>
+                    <div className="talibes__profil-info">
+                      <span className="talibes__profil-label">
+                        <Mail size={11} /> EMAIL
+                      </span>
+                      <span className="talibes__profil-value">
+                        {selectedPartenaire.email || "—"}
+                      </span>
+                    </div>
+                    <div className="talibes__profil-info">
+                      <span className="talibes__profil-label">
+                        <Phone size={11} /> TÉLÉPHONE
+                      </span>
+                      <span className="talibes__profil-value">
+                        {selectedPartenaire.telephone || "—"}
+                      </span>
+                    </div>
+                    <div className="talibes__profil-info">
+                      <span className="talibes__profil-label">
+                        <Globe size={11} /> SITE WEB
+                      </span>
+                      <span className="talibes__profil-value">
+                        {selectedPartenaire.site_web || "—"}
+                      </span>
+                    </div>
+                    <div className="talibes__profil-info">
+                      <span className="talibes__profil-label">CONTACT</span>
+                      <span className="talibes__profil-value">
+                        {selectedPartenaire.nom_contact || "—"}
+                      </span>
+                    </div>
+
+                    {selectedPartenaire.message_motivation && (
+                      <div className="talibes__profil-info">
+                        <span className="talibes__profil-label">
+                          MOTIVATION
+                        </span>
+                        <span className="talibes__profil-value partenaires__motivation">
+                          {selectedPartenaire.message_motivation}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Formations proposées */}
+                    <div className="talibes__profil-info">
+                      <span className="talibes__profil-label">
+                        FORMATIONS PROPOSÉES
+                      </span>
+                      {selectedPartenaire.formations?.length > 0 ? (
+                        <div className="partenaires__formations">
+                          {selectedPartenaire.formations.map((f) => (
+                            <div
+                              key={f.id}
+                              className="partenaires__formation-item"
+                            >
+                              <div className="partenaires__formation-info">
+                                <span className="partenaires__formation-titre">
+                                  {f.titre}
+                                </span>
+                                <span className="partenaires__formation-domaine">
+                                  {f.domaine || "—"}
+                                </span>
+                              </div>
+                              <span
+                                className={getFormationStatutClass(f.statut)}
+                              >
+                                {getFormationStatutLabel(f.statut)}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="talibes__profil-value">
+                          Aucune formation soumise
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="talibes__profil-actions">
+                    {selectedPartenaire.statut === "en_attente" && (
+                      <>
+                        <button
+                          className="talibes__profil-btn"
+                          style={{
+                            background: "var(--primary)",
+                            color: "white",
+                          }}
+                          onClick={() => handleValider(selectedPartenaire.id)}
+                        >
+                          <CheckCircle size={15} /> Valider
+                        </button>
+                        <button
+                          className="talibes__profil-btn talibes__profil-btn--delete"
+                          onClick={(e) => ouvrirRejeter(selectedPartenaire, e)}
+                        >
+                          <XCircle size={15} /> Rejeter
+                        </button>
+                      </>
+                    )}
+                    {selectedPartenaire.statut !== "en_attente" && (
+                      <button
+                        className="talibes__profil-btn talibes__profil-btn--delete"
+                        onClick={(e) => ouvrirSuppr(selectedPartenaire, e)}
+                      >
+                        <Trash2 size={15} /> Supprimer
+                      </button>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+          ) : (
+            <div className="talibes__profil talibes__profil--empty">
+              <p>Cliquez sur un partenaire pour voir son profil</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Modal rejeter */}
+      {modalRejeter && (
+        <div className="modal__overlay" onClick={() => setModalRejeter(false)}>
+          <div
+            className="modal modal--small"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal__header">
+              <h3 className="modal__title">Confirmer le rejet</h3>
+              <button
+                className="modal__close"
+                onClick={() => setModalRejeter(false)}
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="modal__body">
+              <p className="modal__confirm-text">
+                Êtes-vous sûr de vouloir rejeter la candidature de{" "}
+                <strong>{partenaireARejeter?.nom}</strong> ?
+              </p>
+            </div>
+            <div className="modal__footer">
+              <button
+                className="modal__btn modal__btn--cancel"
+                onClick={() => setModalRejeter(false)}
+              >
+                Annuler
+              </button>
+              <button
+                className="modal__btn modal__btn--danger"
+                onClick={confirmerRejeter}
+                disabled={rejeting}
+              >
+                <XCircle size={15} />
+                {rejeting ? "Rejet..." : "Rejeter"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal suppression */}
+      {modalSuppr && (
+        <div className="modal__overlay" onClick={() => setModalSuppr(false)}>
+          <div
+            className="modal modal--small"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal__header">
+              <h3 className="modal__title">Confirmer la suppression</h3>
+              <button
+                className="modal__close"
+                onClick={() => setModalSuppr(false)}
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="modal__body">
+              <p className="modal__confirm-text">
+                Êtes-vous sûr de vouloir supprimer le partenaire{" "}
+                <strong>{partenaireASupprimer?.nom}</strong> ? Cette action est
+                irréversible.
+              </p>
+            </div>
+            <div className="modal__footer">
+              <button
+                className="modal__btn modal__btn--cancel"
+                onClick={() => setModalSuppr(false)}
+              >
+                Annuler
+              </button>
+              <button
+                className="modal__btn modal__btn--danger"
+                onClick={confirmerSuppr}
+                disabled={deleting}
+              >
+                <Trash2 size={15} />
+                {deleting ? "Suppression..." : "Supprimer"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </AdminLayout>
+  );
 }
+
 export default PartenairesPage;

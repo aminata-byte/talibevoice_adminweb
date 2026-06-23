@@ -7,16 +7,15 @@ import {
   Heart,
   Handshake,
   GraduationCap,
-  Briefcase,
   Bell,
   FileText,
   LogOut,
   Settings,
   User,
   AlertTriangle,
+  UserCog,
 } from "lucide-react";
 import { useAdminAuth } from "../../context/AdminAuthContext";
-import "./Sidebar.css";
 
 const menuItems = [
   {
@@ -28,16 +27,16 @@ const menuItems = [
   { icon: <Users size={20} />, label: "Talibés", path: "/talibes" },
   { icon: <AlertTriangle size={20} />, label: "Besoins", path: "/besoins" },
   { icon: <Heart size={20} />, label: "Dons", path: "/dons" },
+  { icon: <Handshake size={20} />, label: "Partenaires", path: "/partenaires" },
   {
     icon: <GraduationCap size={20} />,
-    label: "Formations",
+    label: "Formations & Insertions",
     path: "/formations",
   },
-  { icon: <Briefcase size={20} />, label: "Offres d'emploi", path: "/offres" },
   { icon: <Bell size={20} />, label: "Notifications", path: "/notifications" },
   { icon: <FileText size={20} />, label: "Rapports", path: "/rapports" },
   {
-    icon: <Handshake size={20} />,
+    icon: <UserCog size={20} />,
     label: "Utilisateurs",
     path: "/utilisateurs",
   },
