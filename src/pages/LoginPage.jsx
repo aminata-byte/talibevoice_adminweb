@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { useAdminAuth } from "../context/AdminAuthContext";
@@ -12,6 +12,29 @@ function LoginPage() {
   const [remember, setRemember] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [stats, setStats] = useState({
+    total_talibes: "—",
+    total_daaras: "—",
+    total_agents: "—",
+  });
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/api/stats");
+      const data = await response.json();
+      setStats({
+        total_talibes: data.total_talibes?.toLocaleString() || "0",
+        total_daaras: data.total_daaras?.toLocaleString() || "0",
+        total_agents: data.total_agents?.toLocaleString() || "0",
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleForm = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -52,15 +75,15 @@ function LoginPage() {
 
           <div className="login__stats">
             <div className="login__stat">
-              <span className="login__stat-number">2 847</span>
+              <span className="login__stat-number">{stats.total_talibes}</span>
               <span className="login__stat-label">TALIBÉS</span>
             </div>
             <div className="login__stat">
-              <span className="login__stat-number">312</span>
+              <span className="login__stat-number">{stats.total_daaras}</span>
               <span className="login__stat-label">DAARAS</span>
             </div>
             <div className="login__stat">
-              <span className="login__stat-number">48</span>
+              <span className="login__stat-number">{stats.total_agents}</span>
               <span className="login__stat-label">AGENTS</span>
             </div>
           </div>
@@ -125,9 +148,6 @@ function LoginPage() {
                 />
                 <span>Se souvenir de moi</span>
               </label>
-              <a href="#" className="login__forgot">
-                Mot de passe oublié ?
-              </a>
             </div>
 
             {error && <p className="login__error">{error}</p>}
