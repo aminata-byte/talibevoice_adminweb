@@ -70,6 +70,7 @@ export function AdminAuthProvider({ children }) {
     <AdminAuthContext.Provider
       value={{
         admin,
+        setAdmin,
         loading,
         login,
         logout,
