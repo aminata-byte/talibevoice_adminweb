@@ -5,7 +5,7 @@ import {
   Heart,
   AlertTriangle,
   GraduationCap,
-  Briefcase,
+  ClipboardList,
   UserCheck,
   TrendingUp,
   ArrowUpRight,
@@ -15,8 +15,13 @@ import AdminLayout from "../components/layout/AdminLayout";
 import adminService from "../services/adminService";
 import "./DashboardPage.css";
 
-// Cible mensuelle provisoire en attendant une vraie configuration côté backend
 const OBJECTIF_MENSUEL_FCFA = 5000000;
+
+const formatMontant = (montant) => {
+  if (montant >= 1000000) return `${(montant / 1000000).toFixed(1)}M FCFA`;
+  if (montant >= 1000) return `${(montant / 1000).toFixed(0)}K FCFA`;
+  return `${montant.toLocaleString()} FCFA`;
+};
 
 function DashboardPage() {
   const [stats, setStats] = useState({
@@ -77,11 +82,10 @@ function DashboardPage() {
     (a) => a.role === "agent" && a.statut === "actif",
   );
   const insertionsEnCours = insertions.filter(
-    (i) => i.statut === "en_cours" || i.statut === "actif",
+    (i) => i.statut === "en_cours" || i.statut === "valide",
   );
   const besoinsUrgents = besoins.filter((b) => b.priorite === "urgent");
 
-  // Dons du mois en cours, pour l'objectif mensuel
   const maintenant = new Date();
   const donsDuMois = donsValides.filter((d) => {
     const date = new Date(d.created_at);
@@ -115,7 +119,7 @@ function DashboardPage() {
     {
       icon: <Heart size={20} />,
       label: "Dons validés",
-      value: `${(totalDonsValides / 1000000).toFixed(1)}M FCFA`,
+      value: formatMontant(totalDonsValides),
       color: "green",
     },
     {
@@ -134,7 +138,7 @@ function DashboardPage() {
       color: "blue",
     },
     {
-      icon: <Briefcase size={20} />,
+      icon: <ClipboardList size={20} />,
       label: "Insertions en cours",
       value: insertionsEnCours.length.toString(),
       color: "green",
@@ -246,10 +250,8 @@ function DashboardPage() {
                 />
               </div>
               <div className="dashboard__progress-labels">
-                <span>Collecté {(collecteMois / 1000000).toFixed(1)}M</span>
-                <span>
-                  Cible {(OBJECTIF_MENSUEL_FCFA / 1000000).toFixed(1)}M
-                </span>
+                <span>Collecté {formatMontant(collecteMois)}</span>
+                <span>Cible {formatMontant(OBJECTIF_MENSUEL_FCFA)}</span>
               </div>
             </div>
           </div>
