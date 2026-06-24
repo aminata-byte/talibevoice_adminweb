@@ -10,7 +10,7 @@ import {
   Bell,
   FileText,
   LogOut,
-  Settings,
+  
   User,
   AlertTriangle,
   UserCog,
@@ -92,17 +92,7 @@ function Sidebar() {
           </span>
           <span className="sidebar__link-label">Profile</span>
         </NavLink>
-        <NavLink
-          to="/parametres"
-          className={({ isActive }) =>
-            `sidebar__link ${isActive ? "sidebar__link--active" : ""}`
-          }
-        >
-          <span className="sidebar__link-icon">
-            <Settings size={20} />
-          </span>
-          <span className="sidebar__link-label">Settings</span>
-        </NavLink>
+        
 
         {/* Admin info */}
         <div className="sidebar__admin">
