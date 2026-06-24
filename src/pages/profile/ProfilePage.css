@@ -87,3 +87,40 @@
     grid-template-columns: 1fr;
   }
 }
+
+.profile__password-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profile__password-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.profile__password-input .modal__input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.profile__eye {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.profile__eye:hover {
+  color: var(--text-primary);
+}

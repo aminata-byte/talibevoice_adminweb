@@ -204,6 +204,11 @@ const adminService = {
     const response = await api.put("/auth/me", data);
     return response.data;
   },
+
+  changePassword: async (data) => {
+    const response = await api.put("/auth/password", data);
+    return response.data;
+  },
 };
 
 export default adminService;
