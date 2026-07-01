@@ -209,6 +209,26 @@ const adminService = {
     const response = await api.put("/auth/password", data);
     return response.data;
   },
+
+  // Missions
+  getMissions: async (params = {}) => {
+    const response = await api.get("/admin/missions", { params });
+    return response.data;
+  },
+  getMission: async (id) => {
+    const response = await api.get(`/admin/missions/${id}`);
+    return response.data;
+  },
+  createMission: async (data) => {
+    const response = await api.post("/admin/missions", data);
+    return response.data;
+  },
+  assignerAgentMission: async (id, agentId) => {
+    const response = await api.post(`/admin/missions/${id}/assigner`, {
+      agent_id: agentId,
+    });
+    return response.data;
+  },
 };
 
 export default adminService;

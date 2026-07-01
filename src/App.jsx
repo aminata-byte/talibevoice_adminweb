@@ -7,6 +7,7 @@ import TalibesPage from "./pages/talibes/TalibesPage";
 import BesoinsPage from "./pages/besoins/BesoinsPage";
 import DonsPage from "./pages/dons/DonsPage";
 import FormationsPage from "./pages/formations/FormationsPage";
+import MissionsPage from "./pages/missions/MissionsPage";
 
 import NotificationsPage from "./pages/notifications/NotificationsPage";
 import RapportsPage from "./pages/rapports/RapportsPage";
@@ -67,6 +68,14 @@ function App() {
           element={
             <ProtectedRoute>
               <FormationsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/missions"
+          element={
+            <ProtectedRoute>
+              <MissionsPage />
             </ProtectedRoute>
           }
         />

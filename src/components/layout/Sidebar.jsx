@@ -10,7 +10,7 @@ import {
   Bell,
   FileText,
   LogOut,
-  
+  ClipboardList,
   User,
   AlertTriangle,
   UserCog,
@@ -25,6 +25,7 @@ const menuItems = [
   },
   { icon: <Building2 size={20} />, label: "Daaras", path: "/daaras" },
   { icon: <Users size={20} />, label: "Talibés", path: "/talibes" },
+  { icon: <ClipboardList size={20} />, label: "Missions", path: "/missions" },
   { icon: <AlertTriangle size={20} />, label: "Besoins", path: "/besoins" },
   { icon: <Heart size={20} />, label: "Dons", path: "/dons" },
   { icon: <Handshake size={20} />, label: "Partenaires", path: "/partenaires" },

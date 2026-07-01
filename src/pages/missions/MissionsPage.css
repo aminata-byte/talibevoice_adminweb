@@ -1,0 +1,45 @@
+.missions__form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.missions__form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary, #555);
+}
+
+.missions__form-group input,
+.missions__form-group select,
+.missions__form-group textarea {
+  padding: 10px 12px;
+  border: 1px solid var(--border, #ddd);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.missions__form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.missions__form-error {
+  background: rgba(220, 38, 38, 0.08);
+  color: #dc2626;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.missions__select-inline {
+  border: 1px solid var(--border, #ddd);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 13px;
+  font-family: inherit;
+}
