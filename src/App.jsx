@@ -15,6 +15,7 @@ import UtilisateursPage from "./pages/utilisateurs/UtilisateursPage";
 import AgentsPage from "./pages/agents/AgentsPage";
 import PartenairesPage from "./pages/partenaires/PartenairesPage";
 import ProfilePage from "./pages/profile/ProfilePage";
+import ObjectifsPage from "./pages/objectifs/ObjectifsPage";
 
 function App() {
   return (
@@ -129,6 +130,14 @@ function App() {
         />
 
         <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route
+          path="/objectifs"
+          element={
+            <ProtectedRoute>
+              <ObjectifsPage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

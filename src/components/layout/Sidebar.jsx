@@ -16,6 +16,7 @@ import {
   UserCog,
 } from "lucide-react";
 import { useAdminAuth } from "../../context/AdminAuthContext";
+import { Target } from "lucide-react";
 
 const menuItems = [
   {
@@ -26,6 +27,7 @@ const menuItems = [
   { icon: <Building2 size={20} />, label: "Daaras", path: "/daaras" },
   { icon: <Users size={20} />, label: "Talibés", path: "/talibes" },
   { icon: <ClipboardList size={20} />, label: "Missions", path: "/missions" },
+  { icon: <Target size={20} />, label: "Objectifs", path: "/objectifs" },
   { icon: <AlertTriangle size={20} />, label: "Besoins", path: "/besoins" },
   { icon: <Heart size={20} />, label: "Dons", path: "/dons" },
   { icon: <Handshake size={20} />, label: "Partenaires", path: "/partenaires" },

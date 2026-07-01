@@ -15,6 +15,7 @@ import adminService from "../../services/adminService";
 import "./MissionsPage.css";
 
 const ITEMS_PAR_PAGE = 10;
+const TODAY = new Date().toISOString().split("T")[0];
 
 const TYPES = [
   { value: "recensement", label: "Recensement" },
@@ -96,6 +97,16 @@ function MissionsPage() {
       return;
     }
 
+    if (form.date_debut && form.date_debut < TODAY) {
+      setFormError("La date de début ne peut pas être dans le passé.");
+      return;
+    }
+
+    if (form.date_fin && form.date_debut && form.date_fin < form.date_debut) {
+      setFormError("La date de fin doit être après la date de début.");
+      return;
+    }
+
     setCreating(true);
     try {
       const nouvelleMission = await adminService.createMission(form);
@@ -162,6 +173,15 @@ function MissionsPage() {
 
   const getTypeLabel = (type) =>
     TYPES.find((t) => t.value === type)?.label || type;
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "—";
+    return new Date(dateStr).toLocaleDateString("fr-FR", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
 
   return (
     <AdminLayout titre="Missions">
@@ -364,7 +384,7 @@ function MissionsPage() {
                     <Calendar size={11} /> DATE DÉBUT
                   </span>
                   <span className="talibes__profil-value">
-                    {selectedMission.date_debut || "—"}
+                    {formatDate(selectedMission.date_debut)}
                   </span>
                 </div>
                 <div className="talibes__profil-info">
@@ -372,7 +392,7 @@ function MissionsPage() {
                     <Calendar size={11} /> DATE FIN
                   </span>
                   <span className="talibes__profil-value">
-                    {selectedMission.date_fin || "—"}
+                    {formatDate(selectedMission.date_fin)}
                   </span>
                 </div>
                 {selectedMission.description && (
@@ -477,6 +497,7 @@ function MissionsPage() {
                     <input
                       type="date"
                       value={form.date_debut}
+                      min={TODAY}
                       onChange={(e) =>
                         handleFormChange("date_debut", e.target.value)
                       }
@@ -487,6 +508,7 @@ function MissionsPage() {
                     <input
                       type="date"
                       value={form.date_fin}
+                      min={form.date_debut || TODAY}
                       onChange={(e) =>
                         handleFormChange("date_fin", e.target.value)
                       }

@@ -11,11 +11,9 @@ function NotificationsPage() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
 
-  // Destinataires
   const [agents, setAgents] = useState([]);
   const [partenaires, setPartenaires] = useState([]);
 
-  // Formulaire
   const [form, setForm] = useState({
     type: "",
     destinataire_type: "agent",
@@ -85,7 +83,6 @@ function NotificationsPage() {
     }
   };
 
-  // Stats calculées
   const stats = useMemo(() => {
     const total = notifications.length;
     const lues = notifications.filter((n) => n.est_lue).length;
@@ -94,7 +91,6 @@ function NotificationsPage() {
     return { total, lues, tauxLecture, derniere };
   }, [notifications]);
 
-  // Pagination
   const totalPages = Math.max(
     1,
     Math.ceil(notifications.length / ITEMS_PAR_PAGE),
@@ -111,6 +107,7 @@ function NotificationsPage() {
       don_valide: "Don validé",
       redistribution: "Redistribution",
       insertion_talibe: "Insertion talibé",
+      mission_assignee: "Mission assignée",
     };
     return labels[type] || type;
   };
@@ -119,6 +116,7 @@ function NotificationsPage() {
     if (type === "besoin_urgent") return "notif__dot--red";
     if (type === "offre_validee") return "notif__dot--blue";
     if (type === "don_valide") return "notif__dot--green";
+    if (type === "mission_assignee") return "notif__dot--green";
     return "notif__dot--gray";
   };
 
@@ -163,7 +161,6 @@ function NotificationsPage() {
             )}
 
             <div className="notifs__form">
-              {/* Type de notification */}
               <div className="notifs__form-group">
                 <label className="modal__label">Type de notification</label>
                 <select
@@ -180,7 +177,6 @@ function NotificationsPage() {
                 </select>
               </div>
 
-              {/* Type de destinataire */}
               <div className="notifs__form-group">
                 <label className="modal__label">Type de destinataire</label>
                 <div className="notifs__radio-group">
@@ -219,7 +215,6 @@ function NotificationsPage() {
                 </div>
               </div>
 
-              {/* Destinataire spécifique */}
               <div className="notifs__form-group">
                 <label className="modal__label">Destinataire</label>
                 <select
@@ -251,7 +246,6 @@ function NotificationsPage() {
                 </select>
               </div>
 
-              {/* Message */}
               <div className="notifs__form-group">
                 <label className="modal__label">Message</label>
                 <textarea
@@ -354,7 +348,10 @@ function NotificationsPage() {
               <span>
                 {notifications.length === 0
                   ? "Aucune notification"
-                  : `Affichage ${(page - 1) * ITEMS_PAR_PAGE + 1}–${Math.min(page * ITEMS_PAR_PAGE, notifications.length)} sur ${notifications.length} notifications`}
+                  : `Affichage ${(page - 1) * ITEMS_PAR_PAGE + 1}–${Math.min(
+                      page * ITEMS_PAR_PAGE,
+                      notifications.length,
+                    )} sur ${notifications.length} notifications`}
               </span>
               <div className="talibes__pages">
                 <button
@@ -387,7 +384,7 @@ function NotificationsPage() {
           </div>
         </div>
 
-        {/* Stats bas — calculées depuis les vraies données */}
+        {/* Stats */}
         <div className="notifs__stats">
           <div className="notifs__stat-card">
             <p className="notifs__stat-value">{stats.tauxLecture}%</p>
@@ -407,7 +404,10 @@ function NotificationsPage() {
               {stats.derniere
                 ? new Date(stats.derniere.created_at).toLocaleDateString(
                     "fr-FR",
-                    { day: "2-digit", month: "short" },
+                    {
+                      day: "2-digit",
+                      month: "short",
+                    },
                   )
                 : "—"}
             </p>

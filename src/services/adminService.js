@@ -229,6 +229,28 @@ const adminService = {
     });
     return response.data;
   },
+
+  // Objectifs
+  getObjectifs: async () => {
+    const response = await api.get("/admin/objectifs");
+    return response.data;
+  },
+  createObjectif: async (data) => {
+    const response = await api.post("/admin/objectifs", data);
+    return response.data;
+  },
+  updateObjectif: async (id, data) => {
+    const response = await api.put(`/admin/objectifs/${id}`, data);
+    return response.data;
+  },
+  deleteObjectif: async (id) => {
+    const response = await api.delete(`/admin/objectifs/${id}`);
+    return response.data;
+  },
+  getObjectifsAgent: async (agentId) => {
+    const response = await api.get(`/admin/objectifs/agent/${agentId}`);
+    return response.data;
+  },
 };
 
 export default adminService;
