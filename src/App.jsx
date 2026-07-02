@@ -8,7 +8,6 @@ import BesoinsPage from "./pages/besoins/BesoinsPage";
 import DonsPage from "./pages/dons/DonsPage";
 import FormationsPage from "./pages/formations/FormationsPage";
 import MissionsPage from "./pages/missions/MissionsPage";
-
 import NotificationsPage from "./pages/notifications/NotificationsPage";
 import RapportsPage from "./pages/rapports/RapportsPage";
 import UtilisateursPage from "./pages/utilisateurs/UtilisateursPage";
@@ -16,6 +15,7 @@ import AgentsPage from "./pages/agents/AgentsPage";
 import PartenairesPage from "./pages/partenaires/PartenairesPage";
 import ProfilePage from "./pages/profile/ProfilePage";
 import ObjectifsPage from "./pages/objectifs/ObjectifsPage";
+import InsertionsPage from "./pages/insertions/InsertionsPage";
 
 function App() {
   return (
@@ -69,6 +69,15 @@ function App() {
           element={
             <ProtectedRoute>
               <FormationsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/insertions"
+          element={
+            <ProtectedRoute>
+              <InsertionsPage />
             </ProtectedRoute>
           }
         />
@@ -128,8 +137,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
-        <Route path="*" element={<Navigate to="/login" replace />} />
         <Route
           path="/objectifs"
           element={
@@ -138,6 +145,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   );

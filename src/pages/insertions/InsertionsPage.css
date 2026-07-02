@@ -1,0 +1,38 @@
+.insertions__stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.insertions__stat {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.25rem;
+  border-left: 4px solid var(--border);
+}
+
+.insertions__stat--yellow {
+  border-left-color: #f59e0b;
+}
+
+.insertions__stat--blue {
+  border-left-color: #3b82f6;
+}
+
+.insertions__stat--green {
+  border-left-color: var(--primary);
+}
+
+.insertions__stat-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.insertions__stat-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}

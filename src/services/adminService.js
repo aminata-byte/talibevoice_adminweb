@@ -251,6 +251,11 @@ const adminService = {
     const response = await api.get(`/admin/objectifs/agent/${agentId}`);
     return response.data;
   },
+
+  deleteAgent: async (id) => {
+    const response = await api.delete(`/admin/utilisateurs/${id}`);
+    return response.data;
+  },
 };
 
 export default adminService;

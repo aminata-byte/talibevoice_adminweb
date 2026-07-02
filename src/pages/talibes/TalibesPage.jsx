@@ -87,8 +87,18 @@ function TalibesPage() {
 
   const getAge = (dateNaissance) => {
     if (!dateNaissance) return "—";
-    const age =
-      new Date().getFullYear() - new Date(dateNaissance).getFullYear();
+    const naissance = new Date(dateNaissance);
+    if (isNaN(naissance.getTime())) return "—";
+    const aujourdHui = new Date();
+    let age = aujourdHui.getFullYear() - naissance.getFullYear();
+    const moisDiff = aujourdHui.getMonth() - naissance.getMonth();
+    if (
+      moisDiff < 0 ||
+      (moisDiff === 0 && aujourdHui.getDate() < naissance.getDate())
+    ) {
+      age--;
+    }
+    if (age < 0 || age > 120) return "—";
     return `${age} ans`;
   };
 

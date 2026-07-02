@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { useAdminAuth } from "../context/AdminAuthContext";
+import api from "../services/api";
 import "./LoginPage.css";
 
 function LoginPage() {
@@ -24,8 +25,8 @@ function LoginPage() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/stats");
-      const data = await response.json();
+      const response = await api.get("/stats");
+      const data = response.data;
       setStats({
         total_talibes: data.total_talibes?.toLocaleString() || "0",
         total_daaras: data.total_daaras?.toLocaleString() || "0",
@@ -58,7 +59,6 @@ function LoginPage() {
 
   return (
     <div className="login">
-      {/* Panneau gauche */}
       <div className="login__left">
         <div className="login__left-content">
           <div className="login__brand">
@@ -90,7 +90,6 @@ function LoginPage() {
         </div>
       </div>
 
-      {/* Panneau droit */}
       <div className="login__right">
         <div className="login__form-container">
           <div className="login__form-header">

@@ -152,7 +152,20 @@ function DonsPage() {
     page * ITEMS_PAR_PAGE,
   );
 
-  const moisLabels = ["Jan", "Fév", "Mar", "Avr", "Mai", "Jun"];
+  const moisLabels = [
+    "Jan",
+    "Fév",
+    "Mar",
+    "Avr",
+    "Mai",
+    "Jun",
+    "Jul",
+    "Aoû",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Déc",
+  ];
   const moisData = moisLabels.map((_, index) =>
     donsFinanciers
       .filter((d) => new Date(d.created_at).getMonth() === index)
@@ -281,7 +294,7 @@ function DonsPage() {
         <div className="dons__chart-card">
           <div className="dons__chart-header">
             <h3 className="dons__chart-title">
-              Évolution des dons (Jan - Juin)
+              Évolution des dons (Jan - Déc)
             </h3>
             <div className="dons__chart-legend">
               <span className="dons__chart-dot"></span>

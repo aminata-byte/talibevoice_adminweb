@@ -7,6 +7,7 @@ import {
   Heart,
   Handshake,
   GraduationCap,
+  Briefcase,
   Bell,
   FileText,
   LogOut,
@@ -14,34 +15,87 @@ import {
   User,
   AlertTriangle,
   UserCog,
+  Target,
+  UserCheck,
 } from "lucide-react";
 import { useAdminAuth } from "../../context/AdminAuthContext";
-import { Target } from "lucide-react";
 
-const menuItems = [
+const menuCategories = [
   {
-    icon: <LayoutDashboard size={20} />,
-    label: "Tableau de bord",
-    path: "/dashboard",
+    items: [
+      {
+        icon: <LayoutDashboard size={20} />,
+        label: "Tableau de bord",
+        path: "/dashboard",
+      },
+    ],
   },
-  { icon: <Building2 size={20} />, label: "Daaras", path: "/daaras" },
-  { icon: <Users size={20} />, label: "Talibés", path: "/talibes" },
-  { icon: <ClipboardList size={20} />, label: "Missions", path: "/missions" },
-  { icon: <Target size={20} />, label: "Objectifs", path: "/objectifs" },
-  { icon: <AlertTriangle size={20} />, label: "Besoins", path: "/besoins" },
-  { icon: <Heart size={20} />, label: "Dons", path: "/dons" },
-  { icon: <Handshake size={20} />, label: "Partenaires", path: "/partenaires" },
   {
-    icon: <GraduationCap size={20} />,
-    label: "Formations & Insertions",
-    path: "/formations",
+    label: "Recensement",
+    items: [
+      { icon: <Users size={20} />, label: "Talibés", path: "/talibes" },
+      { icon: <Building2 size={20} />, label: "Daaras", path: "/daaras" },
+    ],
   },
-  { icon: <Bell size={20} />, label: "Notifications", path: "/notifications" },
-  { icon: <FileText size={20} />, label: "Rapports", path: "/rapports" },
   {
-    icon: <UserCog size={20} />,
-    label: "Utilisateurs",
-    path: "/utilisateurs",
+    label: "Terrain",
+    items: [
+      {
+        icon: <ClipboardList size={20} />,
+        label: "Missions",
+        path: "/missions",
+      },
+      { icon: <Target size={20} />, label: "Objectifs", path: "/objectifs" },
+      { icon: <AlertTriangle size={20} />, label: "Besoins", path: "/besoins" },
+    ],
+  },
+  {
+    label: "Dons & Partenaires",
+    items: [
+      { icon: <Heart size={20} />, label: "Dons", path: "/dons" },
+      {
+        icon: <Handshake size={20} />,
+        label: "Partenaires",
+        path: "/partenaires",
+      },
+    ],
+  },
+  {
+    label: "Formation & Insertion",
+    items: [
+      {
+        icon: <GraduationCap size={20} />,
+        label: "Formations",
+        path: "/formations",
+      },
+      {
+        icon: <Briefcase size={20} />,
+        label: "Insertions",
+        path: "/insertions",
+      },
+    ],
+  },
+  {
+    label: "Communication",
+    items: [
+      {
+        icon: <Bell size={20} />,
+        label: "Notifications",
+        path: "/notifications",
+      },
+      { icon: <FileText size={20} />, label: "Rapports", path: "/rapports" },
+    ],
+  },
+  {
+    label: "Administration",
+    items: [
+      { icon: <UserCheck size={20} />, label: "Agents", path: "/agents" },
+      {
+        icon: <UserCog size={20} />,
+        label: "Utilisateurs",
+        path: "/utilisateurs",
+      },
+    ],
   },
 ];
 
@@ -56,7 +110,6 @@ function Sidebar() {
 
   return (
     <aside className="sidebar">
-      {/* Logo */}
       <div className="sidebar__logo">
         <img
           src="/src/assets/logo.jpg"
@@ -66,23 +119,28 @@ function Sidebar() {
         <span className="sidebar__logo-label">Admin</span>
       </div>
 
-      {/* Navigation */}
       <nav className="sidebar__nav">
-        {menuItems.map((item, index) => (
-          <NavLink
-            key={index}
-            to={item.path}
-            className={({ isActive }) =>
-              `sidebar__link ${isActive ? "sidebar__link--active" : ""}`
-            }
-          >
-            <span className="sidebar__link-icon">{item.icon}</span>
-            <span className="sidebar__link-label">{item.label}</span>
-          </NavLink>
+        {menuCategories.map((category, catIndex) => (
+          <div key={catIndex} className="sidebar__category">
+            {category.label && (
+              <p className="sidebar__category-label">{category.label}</p>
+            )}
+            {category.items.map((item, itemIndex) => (
+              <NavLink
+                key={itemIndex}
+                to={item.path}
+                className={({ isActive }) =>
+                  `sidebar__link ${isActive ? "sidebar__link--active" : ""}`
+                }
+              >
+                <span className="sidebar__link-icon">{item.icon}</span>
+                <span className="sidebar__link-label">{item.label}</span>
+              </NavLink>
+            ))}
+          </div>
         ))}
       </nav>
 
-      {/* Footer */}
       <div className="sidebar__footer">
         <NavLink
           to="/profile"
@@ -95,9 +153,7 @@ function Sidebar() {
           </span>
           <span className="sidebar__link-label">Profile</span>
         </NavLink>
-        
 
-        {/* Admin info */}
         <div className="sidebar__admin">
           <div className="sidebar__admin-avatar">
             {admin?.name?.[0]?.toUpperCase() || "A"}

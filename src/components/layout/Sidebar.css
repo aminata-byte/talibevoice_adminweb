@@ -180,3 +180,17 @@
 .sidebar::-webkit-scrollbar-thumb:hover {
   background-color: rgba(255, 255, 255, 0.15);
 }
+
+.sidebar__category {
+  margin-bottom: 4px;
+}
+
+.sidebar__category-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 12px 12px 4px 12px;
+  margin: 0;
+}

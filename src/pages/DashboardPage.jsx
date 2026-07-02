@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Users,
   Building2,
@@ -24,6 +25,7 @@ const formatMontant = (montant) => {
 };
 
 function DashboardPage() {
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     total_talibes: 0,
     total_daaras: 0,
@@ -152,7 +154,21 @@ function DashboardPage() {
     },
   ];
 
-  const moisLabels = ["Jan", "Fév", "Mar", "Avr", "Mai", "Jun"];
+  const moisLabels = [
+    "Jan",
+    "Fév",
+    "Mar",
+    "Avr",
+    "Mai",
+    "Jun",
+    "Jul",
+    "Aoû",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Déc",
+  ];
+
   const moisData = moisLabels.map((_, index) =>
     donsValides
       .filter((d) => new Date(d.created_at).getMonth() === index)
@@ -179,7 +195,6 @@ function DashboardPage() {
   return (
     <AdminLayout titre="Tableau de bord">
       <div className="dashboard">
-        {/* Stats cards */}
         <div className="dashboard__stats">
           {statCards.map((card, index) => (
             <div
@@ -210,7 +225,6 @@ function DashboardPage() {
         </div>
 
         <div className="dashboard__grid">
-          {/* Graphique dons */}
           <div className="dashboard__card dashboard__card--large">
             <div className="dashboard__card-header">
               <h3 className="dashboard__card-title">Dons par mois (FCFA)</h3>
@@ -232,7 +246,6 @@ function DashboardPage() {
             </div>
           </div>
 
-          {/* Objectif mensuel */}
           <div className="dashboard__card dashboard__card--objectif">
             <div className="dashboard__objectif-icon">
               <TrendingUp size={24} />
@@ -257,13 +270,15 @@ function DashboardPage() {
           </div>
         </div>
 
-        {/* Derniers dons */}
         <div className="dashboard__card">
           <div className="dashboard__card-header">
             <h3 className="dashboard__card-title">Derniers dons</h3>
-            <a href="/dons" className="dashboard__voir-tout">
+            <button
+              className="dashboard__voir-tout"
+              onClick={() => navigate("/dons")}
+            >
               Voir tout →
-            </a>
+            </button>
           </div>
           <table className="dashboard__table">
             <thead>
