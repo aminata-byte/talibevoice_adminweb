@@ -14,6 +14,8 @@ import {
 import AdminLayout from "../../components/layout/AdminLayout";
 import adminService from "../../services/adminService";
 import "./DaarasPage.css";
+import ExportPDFModal from "../../components/export/ExportPDFModal";
+import DaarasPDF from "../../components/export/DaarasPDF";
 
 const ITEMS_PAR_PAGE = 10;
 
@@ -27,6 +29,7 @@ function DaarasPage() {
   const [modalSuppr, setModalSuppr] = useState(false);
   const [daaraASupprimer, setDaaraASupprimer] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [modalExport, setModalExport] = useState(false);
 
   useEffect(() => {
     fetchDaaras();
@@ -151,7 +154,10 @@ function DaarasPage() {
               </span>
             </h2>
           </div>
-          <button className="page__btn-export">
+          <button
+            className="page__btn-export"
+            onClick={() => setModalExport(true)}
+          >
             <Download size={16} />
             Exporter
           </button>
@@ -485,6 +491,13 @@ function DaarasPage() {
             </div>
           </div>
         </div>
+      )}
+      {modalExport && (
+        <ExportPDFModal
+          titre="Rapport des Daaras"
+          document={<DaarasPDF daaras={daarasFiltres} />}
+          onClose={() => setModalExport(false)}
+        />
       )}
     </AdminLayout>
   );
