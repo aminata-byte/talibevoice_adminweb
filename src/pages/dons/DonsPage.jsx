@@ -13,6 +13,8 @@ import {
 import AdminLayout from "../../components/layout/AdminLayout";
 import adminService from "../../services/adminService";
 import "./DonsPage.css";
+import ExportPDFModal from "../../components/export/ExportPDFModal";
+import DonsPDF from "../../components/export/DonsPDF";
 
 const ITEMS_PAR_PAGE = 10;
 
@@ -32,6 +34,7 @@ function DonsPage() {
   const [modalRejeter, setModalRejeter] = useState(false);
   const [donARejeter, setDonARejeter] = useState(null);
   const [rejeting, setRejeting] = useState(false);
+  const [modalExport, setModalExport] = useState(false);
 
   useEffect(() => {
     fetchDons();
@@ -232,9 +235,11 @@ function DonsPage() {
               Suivi et validation des contributions pour les Talibés.
             </p>
           </div>
-          <button className="page__btn-export">
-            <Download size={16} />
-            Exporter Rapport
+          <button
+            className="page__btn-export"
+            onClick={() => setModalExport(true)}
+          >
+            <Download size={16} /> Exporter Rapport
           </button>
         </div>
 
@@ -655,6 +660,13 @@ function DonsPage() {
             </div>
           </div>
         </div>
+      )}
+      {modalExport && (
+        <ExportPDFModal
+          titre="Rapport des Dons"
+          document={<DonsPDF dons={donsFiltres} />}
+          onClose={() => setModalExport(false)}
+        />
       )}
     </AdminLayout>
   );

@@ -3,6 +3,8 @@ import { Search, Eye, Trash2, Download, X } from "lucide-react";
 import AdminLayout from "../../components/layout/AdminLayout";
 import adminService from "../../services/adminService";
 import "./TalibesPage.css";
+import ExportPDFModal from "../../components/export/ExportPDFModal";
+import TalibesPDF from "../../components/export/TalibesPDF";
 
 const ITEMS_PAR_PAGE = 10;
 
@@ -18,6 +20,7 @@ function TalibesPage() {
   const [modalSuppr, setModalSuppr] = useState(false);
   const [talibeASupprimer, setTalibeASupprimer] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [modalExport, setModalExport] = useState(false);
 
   useEffect(() => {
     fetchTalibes();
@@ -136,9 +139,11 @@ function TalibesPage() {
               </span>
             </h2>
           </div>
-          <button className="page__btn-export">
-            <Download size={16} />
-            Exporter PDF
+          <button
+            className="page__btn-export"
+            onClick={() => setModalExport(true)}
+          >
+            <Download size={16} /> Exporter PDF
           </button>
         </div>
 
@@ -462,6 +467,13 @@ function TalibesPage() {
             </div>
           </div>
         </div>
+      )}
+      {modalExport && (
+        <ExportPDFModal
+          titre="Rapport des Talibés"
+          document={<TalibesPDF talibes={talibesFiltres} />}
+          onClose={() => setModalExport(false)}
+        />
       )}
     </AdminLayout>
   );

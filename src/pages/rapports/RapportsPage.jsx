@@ -10,6 +10,8 @@ import {
 import AdminLayout from "../../components/layout/AdminLayout";
 import adminService from "../../services/adminService";
 import "./RapportsPage.css";
+import ExportPDFModal from "../../components/export/ExportPDFModal";
+import RapportsPDF from "../../components/export/RapportsPDF";
 
 const ITEMS_PAR_PAGE = 10;
 
@@ -19,6 +21,7 @@ function RapportsPage() {
   const [filtre, setFiltre] = useState("soumis");
   const [page, setPage] = useState(1);
   const [selectedRapport, setSelectedRapport] = useState(null);
+  const [modalExport, setModalExport] = useState(false);
 
   useEffect(() => {
     fetchRapports();
@@ -116,9 +119,11 @@ function RapportsPage() {
               Supervisez et validez les activités remontées par le terrain.
             </p>
           </div>
-          <button className="page__btn-export">
-            <Download size={16} />
-            Générer rapport global
+          <button
+            className="page__btn-export"
+            onClick={() => setModalExport(true)}
+          >
+            <Download size={16} /> Générer rapport global
           </button>
         </div>
 
@@ -311,7 +316,6 @@ function RapportsPage() {
           </div>
         </div>
       </div>
-
       {/* Modal détail */}
       {selectedRapport && (
         <div
@@ -394,6 +398,13 @@ function RapportsPage() {
             </div>
           </div>
         </div>
+      )}
+      {modalExport && (
+        <ExportPDFModal
+          titre="Rapport Global des Activités"
+          document={<RapportsPDF rapports={rapports} />}
+          onClose={() => setModalExport(false)}
+        />
       )}
     </AdminLayout>
   );

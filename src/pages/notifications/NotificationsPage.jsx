@@ -3,6 +3,8 @@ import { Send, Download } from "lucide-react";
 import AdminLayout from "../../components/layout/AdminLayout";
 import adminService from "../../services/adminService";
 import "./NotificationsPage.css";
+import ExportPDFModal from "../../components/export/ExportPDFModal";
+import NotificationsPDF from "../../components/export/NotificationsPDF";
 
 const ITEMS_PAR_PAGE = 10;
 
@@ -10,6 +12,7 @@ function NotificationsPage() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [modalExport, setModalExport] = useState(false);
 
   const [agents, setAgents] = useState([]);
   const [partenaires, setPartenaires] = useState([]);
@@ -276,7 +279,10 @@ function NotificationsPage() {
               <h3 className="notifs__section-title">
                 Historique des notifications
               </h3>
-              <button className="page__btn-export">
+              <button
+                className="page__btn-export"
+                onClick={() => setModalExport(true)}
+              >
                 <Download size={14} /> Exporter
               </button>
             </div>
@@ -419,6 +425,13 @@ function NotificationsPage() {
           </div>
         </div>
       </div>
+      {modalExport && (
+        <ExportPDFModal
+          titre="Historique des Notifications"
+          document={<NotificationsPDF notifications={notifications} />}
+          onClose={() => setModalExport(false)}
+        />
+      )}
     </AdminLayout>
   );
 }
