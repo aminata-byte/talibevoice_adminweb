@@ -3,11 +3,14 @@ import {
   Search,
   CheckCircle,
   XCircle,
+  Eye,
   Trash2,
   X,
-  Globe,
-  Phone,
+  Building2,
   Mail,
+  Phone,
+  Globe,
+  GraduationCap,
 } from "lucide-react";
 import AdminLayout from "../../components/layout/AdminLayout";
 import adminService from "../../services/adminService";
@@ -22,13 +25,12 @@ function PartenairesPage() {
   const [filtre, setFiltre] = useState("tous");
   const [page, setPage] = useState(1);
   const [selectedPartenaire, setSelectedPartenaire] = useState(null);
-  const [loadingDetail, setLoadingDetail] = useState(false);
   const [modalSuppr, setModalSuppr] = useState(false);
   const [partenaireASupprimer, setPartenaireASupprimer] = useState(null);
   const [deleting, setDeleting] = useState(false);
-  const [modalRejeter, setModalRejeter] = useState(false);
-  const [partenaireARejeter, setPartenaireARejeter] = useState(null);
-  const [rejeting, setRejeting] = useState(false);
+  const [modalCode, setModalCode] = useState(false);
+  const [codePartenaire, setCodePartenaire] = useState(null);
+  const [nomPartenaire, setNomPartenaire] = useState(null);
 
   useEffect(() => {
     fetchPartenaires();
@@ -46,54 +48,41 @@ function PartenairesPage() {
     }
   };
 
-  const selectPartenaire = async (partenaire) => {
-    setLoadingDetail(true);
-    try {
-      const detail = await adminService.getPartenaire(partenaire.id);
-      setSelectedPartenaire(detail);
-    } catch {
-      setSelectedPartenaire(partenaire);
-    } finally {
-      setLoadingDetail(false);
-    }
-  };
-
   const handleValider = async (id) => {
     try {
-      await adminService.validerPartenaire(id);
+      const res = await adminService.validerPartenaire(id);
       setPartenaires((prev) =>
-        prev.map((p) => (p.id === id ? { ...p, statut: "valide" } : p)),
+        prev.map((p) =>
+          p.id === id
+            ? { ...p, statut: "valide", code_partenaire: res.code_partenaire }
+            : p,
+        ),
       );
-      if (selectedPartenaire?.id === id)
-        setSelectedPartenaire((p) => ({ ...p, statut: "valide" }));
+      if (selectedPartenaire?.id === id) {
+        setSelectedPartenaire((p) => ({
+          ...p,
+          statut: "valide",
+          code_partenaire: res.code_partenaire,
+        }));
+      }
+      setCodePartenaire(res.code_partenaire);
+      setNomPartenaire(res.partenaire?.nom);
+      setModalCode(true);
     } catch (err) {
       console.error(err);
     }
   };
 
-  const ouvrirRejeter = (partenaire, e) => {
-    e.stopPropagation();
-    setPartenaireARejeter(partenaire);
-    setModalRejeter(true);
-  };
-
-  const confirmerRejeter = async () => {
-    setRejeting(true);
+  const handleRejeter = async (id) => {
     try {
-      await adminService.rejeterPartenaire(partenaireARejeter.id);
+      await adminService.rejeterPartenaire(id);
       setPartenaires((prev) =>
-        prev.map((p) =>
-          p.id === partenaireARejeter.id ? { ...p, statut: "rejete" } : p,
-        ),
+        prev.map((p) => (p.id === id ? { ...p, statut: "rejete" } : p)),
       );
-      if (selectedPartenaire?.id === partenaireARejeter.id) {
+      if (selectedPartenaire?.id === id)
         setSelectedPartenaire((p) => ({ ...p, statut: "rejete" }));
-      }
-      setModalRejeter(false);
     } catch (err) {
       console.error(err);
-    } finally {
-      setRejeting(false);
     }
   };
 
@@ -120,13 +109,12 @@ function PartenairesPage() {
     }
   };
 
-  const partenairesFilters = useMemo(() => {
+  const partenaireFiltres = useMemo(() => {
     return partenaires.filter((p) => {
-      const terme = recherche.toLowerCase();
       const matchRecherche =
-        terme === "" ||
-        p.nom?.toLowerCase().includes(terme) ||
-        p.domaine?.toLowerCase().includes(terme);
+        p.nom?.toLowerCase().includes(recherche.toLowerCase()) ||
+        p.domaine?.toLowerCase().includes(recherche.toLowerCase()) ||
+        p.email?.toLowerCase().includes(recherche.toLowerCase());
       const matchFiltre = filtre === "tous" || p.statut === filtre;
       return matchRecherche && matchFiltre;
     });
@@ -138,9 +126,9 @@ function PartenairesPage() {
 
   const totalPages = Math.max(
     1,
-    Math.ceil(partenairesFilters.length / ITEMS_PAR_PAGE),
+    Math.ceil(partenaireFiltres.length / ITEMS_PAR_PAGE),
   );
-  const partenairesPage = partenairesFilters.slice(
+  const partenairesPage = partenaireFiltres.slice(
     (page - 1) * ITEMS_PAR_PAGE,
     page * ITEMS_PAR_PAGE,
   );
@@ -148,7 +136,7 @@ function PartenairesPage() {
   const getStatutClass = (statut) => {
     if (statut === "valide") return "badge badge--green";
     if (statut === "en_attente") return "badge badge--yellow";
-    return "badge badge--red";
+    return "badge badge--gray";
   };
 
   const getStatutLabel = (statut) => {
@@ -157,39 +145,22 @@ function PartenairesPage() {
     return "Rejeté";
   };
 
-  const getFormationStatutClass = (statut) => {
-    if (statut === "actif") return "badge badge--green";
-    if (statut === "en_attente") return "badge badge--yellow";
-    if (statut === "valide") return "badge badge--blue";
-    return "badge badge--gray";
-  };
-
-  const getFormationStatutLabel = (statut) => {
-    if (statut === "actif") return "Active";
-    if (statut === "en_attente") return "En attente";
-    if (statut === "valide") return "Validée";
-    return "Inactive";
-  };
-
   return (
     <AdminLayout titre="Partenaires">
       <div className="partenaires">
-        {/* Header */}
         <div className="page__header">
           <div>
             <h2 className="page__title">
               Gestion des Partenaires
-              <span className="talibes__count">({partenaires.length})</span>
+              <span className="talibes__count">
+                ({partenaires.length.toLocaleString()})
+              </span>
             </h2>
-            <p className="page__subtitle">
-              Validez les candidatures et gérez les partenaires de TalibeVoice.
-            </p>
           </div>
         </div>
 
-        <div className="partenaires__layout">
-          <div className="partenaires__left">
-            {/* Filtres */}
+        <div className="daaras__layout">
+          <div className="daaras__left">
             <div className="page__filters">
               <div className="page__search">
                 <Search size={16} />
@@ -220,12 +191,11 @@ function PartenairesPage() {
               </div>
             </div>
 
-            {/* Table */}
             <div className="page__table-container">
               <table className="page__table">
                 <thead>
                   <tr>
-                    <th>Nom</th>
+                    <th>Partenaire</th>
                     <th>Domaine</th>
                     <th>Contact</th>
                     <th>Formations</th>
@@ -255,15 +225,22 @@ function PartenairesPage() {
                             ? "talibes__row--active"
                             : ""
                         }
-                        onClick={() => selectPartenaire(partenaire)}
+                        onClick={() => setSelectedPartenaire(partenaire)}
                         style={{ cursor: "pointer" }}
                       >
                         <td>
-                          <strong>{partenaire.nom}</strong>
+                          <div className="page__table-name">
+                            <strong>{partenaire.nom}</strong>
+                            <span>{partenaire.email}</span>
+                          </div>
                         </td>
                         <td>{partenaire.domaine || "—"}</td>
                         <td>{partenaire.nom_contact || "—"}</td>
-                        <td>{partenaire.nombre_formations ?? 0} offre(s)</td>
+                        <td>
+                          <span className="badge badge--blue">
+                            {partenaire.nombre_formations || 0} formation(s)
+                          </span>
+                        </td>
                         <td>
                           <span className={getStatutClass(partenaire.statut)}>
                             {getStatutLabel(partenaire.statut)}
@@ -271,6 +248,16 @@ function PartenairesPage() {
                         </td>
                         <td>
                           <div className="page__actions">
+                            <button
+                              className="page__action-btn page__action-btn--view"
+                              title="Voir"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedPartenaire(partenaire);
+                              }}
+                            >
+                              <Eye size={15} />
+                            </button>
                             {partenaire.statut === "en_attente" && (
                               <>
                                 <button
@@ -286,7 +273,10 @@ function PartenairesPage() {
                                 <button
                                   className="page__action-btn page__action-btn--warn"
                                   title="Rejeter"
-                                  onClick={(e) => ouvrirRejeter(partenaire, e)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRejeter(partenaire.id);
+                                  }}
                                 >
                                   <XCircle size={15} />
                                 </button>
@@ -308,15 +298,14 @@ function PartenairesPage() {
               </table>
             </div>
 
-            {/* Pagination */}
-            <div className="talibes__pagination" style={{ marginTop: "1rem" }}>
+            <div className="talibes__pagination">
               <span>
-                {partenairesFilters.length === 0
+                {partenaireFiltres.length === 0
                   ? "Aucun résultat"
                   : `Affichage ${(page - 1) * ITEMS_PAR_PAGE + 1}–${Math.min(
                       page * ITEMS_PAR_PAGE,
-                      partenairesFilters.length,
-                    )} sur ${partenairesFilters.length} partenaires`}
+                      partenaireFiltres.length,
+                    )} sur ${partenaireFiltres.length} partenaires`}
               </span>
               <div className="talibes__pages">
                 <button
@@ -348,203 +337,122 @@ function PartenairesPage() {
             </div>
           </div>
 
-          {/* Droite — Profil */}
           {selectedPartenaire ? (
             <div className="talibes__profil">
               <h3 className="talibes__profil-title">Détail partenaire</h3>
 
-              {loadingDetail ? (
-                <p
-                  style={{
-                    color: "var(--text-secondary)",
-                    fontSize: "13px",
-                    textAlign: "center",
-                  }}
-                >
-                  Chargement...
-                </p>
-              ) : (
-                <>
-                  <div className="talibes__profil-avatar">
-                    <div className="talibes__profil-initiales">
-                      {selectedPartenaire.nom?.[0]}
-                    </div>
-                    <span className={getStatutClass(selectedPartenaire.statut)}>
-                      {getStatutLabel(selectedPartenaire.statut)}
+              <div className="talibes__profil-avatar">
+                <div className="talibes__profil-initiales">
+                  <Building2 size={20} />
+                </div>
+                <span className={getStatutClass(selectedPartenaire.statut)}>
+                  {getStatutLabel(selectedPartenaire.statut)}
+                </span>
+              </div>
+
+              <p className="talibes__profil-name">{selectedPartenaire.nom}</p>
+
+              <div className="talibes__profil-infos">
+                <div className="talibes__profil-info">
+                  <span className="talibes__profil-label">DOMAINE</span>
+                  <span className="talibes__profil-value">
+                    {selectedPartenaire.domaine || "—"}
+                  </span>
+                </div>
+                <div className="talibes__profil-info">
+                  <span className="talibes__profil-label">
+                    <Mail size={11} /> EMAIL
+                  </span>
+                  <span className="talibes__profil-value">
+                    {selectedPartenaire.email || "—"}
+                  </span>
+                </div>
+                <div className="talibes__profil-info">
+                  <span className="talibes__profil-label">
+                    <Phone size={11} /> TÉLÉPHONE
+                  </span>
+                  <span className="talibes__profil-value">
+                    {selectedPartenaire.telephone || "—"}
+                  </span>
+                </div>
+                <div className="talibes__profil-info">
+                  <span className="talibes__profil-label">CONTACT</span>
+                  <span className="talibes__profil-value">
+                    {selectedPartenaire.nom_contact || "—"}
+                  </span>
+                </div>
+                {selectedPartenaire.site_web && (
+                  <div className="talibes__profil-info">
+                    <span className="talibes__profil-label">
+                      <Globe size={11} /> SITE WEB
+                    </span>
+                    <span className="talibes__profil-value">
+                      {selectedPartenaire.site_web}
                     </span>
                   </div>
-
-                  <p className="talibes__profil-name">
-                    {selectedPartenaire.nom}
-                  </p>
-
-                  <div className="talibes__profil-infos">
-                    <div className="talibes__profil-info">
-                      <span className="talibes__profil-label">DOMAINE</span>
-                      <span className="talibes__profil-value">
-                        {selectedPartenaire.domaine || "—"}
-                      </span>
-                    </div>
-                    <div className="talibes__profil-info">
-                      <span className="talibes__profil-label">
-                        <Mail size={11} /> EMAIL
-                      </span>
-                      <span className="talibes__profil-value">
-                        {selectedPartenaire.email || "—"}
-                      </span>
-                    </div>
-                    <div className="talibes__profil-info">
-                      <span className="talibes__profil-label">
-                        <Phone size={11} /> TÉLÉPHONE
-                      </span>
-                      <span className="talibes__profil-value">
-                        {selectedPartenaire.telephone || "—"}
-                      </span>
-                    </div>
-                    <div className="talibes__profil-info">
-                      <span className="talibes__profil-label">
-                        <Globe size={11} /> SITE WEB
-                      </span>
-                      <span className="talibes__profil-value">
-                        {selectedPartenaire.site_web || "—"}
-                      </span>
-                    </div>
-                    <div className="talibes__profil-info">
-                      <span className="talibes__profil-label">CONTACT</span>
-                      <span className="talibes__profil-value">
-                        {selectedPartenaire.nom_contact || "—"}
-                      </span>
-                    </div>
-
-                    {selectedPartenaire.message_motivation && (
-                      <div className="talibes__profil-info">
-                        <span className="talibes__profil-label">
-                          MOTIVATION
-                        </span>
-                        <span className="talibes__profil-value partenaires__motivation">
-                          {selectedPartenaire.message_motivation}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Formations proposées */}
-                    <div className="talibes__profil-info">
-                      <span className="talibes__profil-label">
-                        FORMATIONS PROPOSÉES
-                      </span>
-                      {selectedPartenaire.formations?.length > 0 ? (
-                        <div className="partenaires__formations">
-                          {selectedPartenaire.formations.map((f) => (
-                            <div
-                              key={f.id}
-                              className="partenaires__formation-item"
-                            >
-                              <div className="partenaires__formation-info">
-                                <span className="partenaires__formation-titre">
-                                  {f.titre}
-                                </span>
-                                <span className="partenaires__formation-domaine">
-                                  {f.domaine || "—"}
-                                </span>
-                              </div>
-                              <span
-                                className={getFormationStatutClass(f.statut)}
-                              >
-                                {getFormationStatutLabel(f.statut)}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="talibes__profil-value">
-                          Aucune formation soumise
-                        </span>
-                      )}
-                    </div>
+                )}
+                <div className="talibes__profil-info">
+                  <span className="talibes__profil-label">
+                    <GraduationCap size={11} /> FORMATIONS
+                  </span>
+                  <span className="talibes__profil-value">
+                    {selectedPartenaire.nombre_formations || 0} formation(s)
+                  </span>
+                </div>
+                {selectedPartenaire.message_motivation && (
+                  <div className="talibes__profil-info">
+                    <span className="talibes__profil-label">MOTIVATION</span>
+                    <span className="talibes__profil-value">
+                      {selectedPartenaire.message_motivation}
+                    </span>
                   </div>
-
-                  <div className="talibes__profil-actions">
-                    {selectedPartenaire.statut === "en_attente" && (
-                      <>
-                        <button
-                          className="talibes__profil-btn"
-                          style={{
-                            background: "var(--primary)",
-                            color: "white",
-                          }}
-                          onClick={() => handleValider(selectedPartenaire.id)}
-                        >
-                          <CheckCircle size={15} /> Valider
-                        </button>
-                        <button
-                          className="talibes__profil-btn talibes__profil-btn--delete"
-                          onClick={(e) => ouvrirRejeter(selectedPartenaire, e)}
-                        >
-                          <XCircle size={15} /> Rejeter
-                        </button>
-                      </>
-                    )}
-                    {selectedPartenaire.statut !== "en_attente" && (
-                      <button
-                        className="talibes__profil-btn talibes__profil-btn--delete"
-                        onClick={(e) => ouvrirSuppr(selectedPartenaire, e)}
-                      >
-                        <Trash2 size={15} /> Supprimer
-                      </button>
-                    )}
+                )}
+                {selectedPartenaire.code_partenaire && (
+                  <div className="talibes__profil-info">
+                    <span className="talibes__profil-label">
+                      CODE PARTENAIRE
+                    </span>
+                    <span
+                      className="talibes__profil-value"
+                      style={{
+                        fontFamily: "monospace",
+                        fontWeight: "700",
+                        color: "var(--primary)",
+                        letterSpacing: "2px",
+                        fontSize: "16px",
+                      }}
+                    >
+                      {selectedPartenaire.code_partenaire}
+                    </span>
                   </div>
-                </>
+                )}
+              </div>
+
+              {selectedPartenaire.statut === "en_attente" && (
+                <div className="talibes__profil-actions">
+                  <button
+                    className="talibes__profil-btn"
+                    style={{ background: "var(--primary)", color: "white" }}
+                    onClick={() => handleValider(selectedPartenaire.id)}
+                  >
+                    <CheckCircle size={15} /> Valider
+                  </button>
+                  <button
+                    className="talibes__profil-btn talibes__profil-btn--delete"
+                    onClick={() => handleRejeter(selectedPartenaire.id)}
+                  >
+                    <XCircle size={15} /> Rejeter
+                  </button>
+                </div>
               )}
             </div>
           ) : (
             <div className="talibes__profil talibes__profil--empty">
-              <p>Cliquez sur un partenaire pour voir son profil</p>
+              <p>Cliquez sur un partenaire pour voir son détail</p>
             </div>
           )}
         </div>
       </div>
-
-      {/* Modal rejeter */}
-      {modalRejeter && (
-        <div className="modal__overlay" onClick={() => setModalRejeter(false)}>
-          <div
-            className="modal modal--small"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="modal__header">
-              <h3 className="modal__title">Confirmer le rejet</h3>
-              <button
-                className="modal__close"
-                onClick={() => setModalRejeter(false)}
-              >
-                <X size={18} />
-              </button>
-            </div>
-            <div className="modal__body">
-              <p className="modal__confirm-text">
-                Êtes-vous sûr de vouloir rejeter la candidature de{" "}
-                <strong>{partenaireARejeter?.nom}</strong> ?
-              </p>
-            </div>
-            <div className="modal__footer">
-              <button
-                className="modal__btn modal__btn--cancel"
-                onClick={() => setModalRejeter(false)}
-              >
-                Annuler
-              </button>
-              <button
-                className="modal__btn modal__btn--danger"
-                onClick={confirmerRejeter}
-                disabled={rejeting}
-              >
-                <XCircle size={15} />
-                {rejeting ? "Rejet..." : "Rejeter"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Modal suppression */}
       {modalSuppr && (
@@ -565,8 +473,7 @@ function PartenairesPage() {
             <div className="modal__body">
               <p className="modal__confirm-text">
                 Êtes-vous sûr de vouloir supprimer le partenaire{" "}
-                <strong>{partenaireASupprimer?.nom}</strong> ? Cette action est
-                irréversible.
+                <strong>{partenaireASupprimer?.nom}</strong> ?
               </p>
             </div>
             <div className="modal__footer">
@@ -583,6 +490,100 @@ function PartenairesPage() {
               >
                 <Trash2 size={15} />
                 {deleting ? "Suppression..." : "Supprimer"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal code partenaire */}
+      {modalCode && (
+        <div className="modal__overlay" onClick={() => setModalCode(false)}>
+          <div
+            className="modal modal--small"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal__header">
+              <h3 className="modal__title">Partenaire validé</h3>
+              <button
+                className="modal__close"
+                onClick={() => setModalCode(false)}
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="modal__body">
+              <p
+                style={{
+                  marginBottom: "1rem",
+                  color: "var(--text-secondary)",
+                  fontSize: "14px",
+                }}
+              >
+                Le partenaire <strong>{nomPartenaire}</strong> a été validé avec
+                succès. Communiquez ce code au partenaire pour qu'il puisse
+                accéder à son espace :
+              </p>
+              <div
+                style={{
+                  background: "rgba(27, 125, 75, 0.08)",
+                  border: "2px dashed var(--primary)",
+                  borderRadius: "10px",
+                  padding: "1.5rem",
+                  textAlign: "center",
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: "11px",
+                    color: "var(--text-secondary)",
+                    marginBottom: "8px",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                  }}
+                >
+                  Code partenaire
+                </p>
+                <p
+                  style={{
+                    fontSize: "28px",
+                    fontWeight: "800",
+                    color: "var(--primary)",
+                    letterSpacing: "6px",
+                    fontFamily: "monospace",
+                    margin: 0,
+                  }}
+                >
+                  {codePartenaire}
+                </p>
+              </div>
+              <p
+                style={{
+                  marginTop: "1rem",
+                  fontSize: "12px",
+                  color: "var(--text-secondary)",
+                  textAlign: "center",
+                }}
+              >
+                Ce code est également visible dans le détail du partenaire.
+              </p>
+            </div>
+            <div className="modal__footer">
+              <button
+                className="modal__btn"
+                style={{ background: "var(--primary)", color: "white" }}
+                onClick={() => {
+                  navigator.clipboard.writeText(codePartenaire);
+                  alert("Code copié !");
+                }}
+              >
+                Copier le code
+              </button>
+              <button
+                className="modal__btn modal__btn--cancel"
+                onClick={() => setModalCode(false)}
+              >
+                Fermer
               </button>
             </div>
           </div>
