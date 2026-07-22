@@ -16,6 +16,8 @@ import PartenairesPage from "./pages/partenaires/PartenairesPage";
 import ProfilePage from "./pages/profile/ProfilePage";
 import ObjectifsPage from "./pages/objectifs/ObjectifsPage";
 import InsertionsPage from "./pages/insertions/InsertionsPage";
+import MessagesPage from "./pages/messages/MessagesPage";
+import RedistributionsPage from "./pages/redistributions/RedistributionsPage";
 
 function App() {
   return (
@@ -142,6 +144,22 @@ function App() {
           element={
             <ProtectedRoute>
               <ObjectifsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/messages"
+          element={
+            <ProtectedRoute>
+              <MessagesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/redistributions"
+          element={
+            <ProtectedRoute>
+              <RedistributionsPage />
             </ProtectedRoute>
           }
         />

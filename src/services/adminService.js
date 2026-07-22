@@ -189,6 +189,24 @@ const adminService = {
     const response = await api.post("/admin/redistributions", data);
     return response.data;
   },
+  validerRedistribution: async (id) => {
+    const response = await api.post(`/admin/redistributions/${id}/valider`);
+    return response.data;
+  },
+
+  // Messages de contact
+  getContacts: async () => {
+    const response = await api.get("/admin/contacts");
+    return response.data;
+  },
+  marquerContactLu: async (id) => {
+    const response = await api.post(`/admin/contacts/${id}/lu`);
+    return response.data;
+  },
+  deleteContact: async (id) => {
+    const response = await api.delete(`/admin/contacts/${id}`);
+    return response.data;
+  },
 
   // Notifications
   getNotifications: async () => {

@@ -17,6 +17,8 @@ import {
   UserCog,
   Target,
   UserCheck,
+  Mail,
+  Repeat,
 } from "lucide-react";
 import { useAdminAuth } from "../../context/AdminAuthContext";
 
@@ -54,6 +56,11 @@ const menuCategories = [
     items: [
       { icon: <Heart size={20} />, label: "Dons", path: "/dons" },
       {
+        icon: <Repeat size={20} />,
+        label: "Redistributions",
+        path: "/redistributions",
+      },
+      {
         icon: <Handshake size={20} />,
         label: "Partenaires",
         path: "/partenaires",
@@ -84,6 +91,7 @@ const menuCategories = [
         path: "/notifications",
       },
       { icon: <FileText size={20} />, label: "Rapports", path: "/rapports" },
+      { icon: <Mail size={20} />, label: "Messages", path: "/messages" },
     ],
   },
   {
