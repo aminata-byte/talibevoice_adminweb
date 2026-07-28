@@ -63,8 +63,6 @@ const styles = StyleSheet.create({
 
 const formatMontant = (montant) => {
   if (!montant) return "Don matériel";
-  if (montant >= 1000000) return `${(montant / 1000000).toFixed(1)}M FCFA`;
-  if (montant >= 1000) return `${(montant / 1000).toFixed(0)}K FCFA`;
   return `${Number(montant).toLocaleString()} FCFA`;
 };
 

@@ -19,9 +19,7 @@ import DonsPDF from "../../components/export/DonsPDF";
 const ITEMS_PAR_PAGE = 10;
 
 const formatMontant = (montant) => {
-  if (montant >= 1000000) return `${(montant / 1000000).toFixed(1)}M FCFA`;
-  if (montant >= 1000) return `${(montant / 1000).toFixed(0)}K FCFA`;
-  return `${montant.toLocaleString()} FCFA`;
+  return `${Number(montant || 0).toLocaleString()} FCFA`;
 };
 
 function DonsPage() {
