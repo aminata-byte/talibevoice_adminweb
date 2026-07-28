@@ -120,7 +120,7 @@ function Sidebar() {
     <aside className="sidebar">
       <div className="sidebar__logo">
         <img
-          src="/src/assets/logo.jpg"
+          src="/logo.jpg"
           alt="TalibeVoice"
           className="sidebar__logo-img"
         />

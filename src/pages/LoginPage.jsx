@@ -63,7 +63,7 @@ function LoginPage() {
         <div className="login__left-content">
           <div className="login__brand">
             <div className="login__brand-logo">
-              <img src="/src/assets/logo.jpg" alt="TalibeVoice" />
+              <img src="/logo.jpg" alt="TalibeVoice" />
             </div>
             <h1 className="login__brand-name">TalibeVoice</h1>
             <span className="login__brand-badge">Administration</span>
