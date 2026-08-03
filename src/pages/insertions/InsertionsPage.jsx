@@ -1,5 +1,14 @@
 import { useState, useEffect, useMemo } from "react";
-import { Search, CheckCircle, Flag, Eye, X } from "lucide-react";
+import {
+  Search,
+  CheckCircle,
+  Flag,
+  Eye,
+  X,
+  Users,
+  Clock,
+  RefreshCw,
+} from "lucide-react";
 import AdminLayout from "../../components/layout/AdminLayout";
 import adminService from "../../services/adminService";
 import "./InsertionsPage.css";
@@ -165,20 +174,40 @@ function InsertionsPage() {
         {/* Stats */}
         <div className="insertions__stats">
           <div className="insertions__stat">
-            <p className="insertions__stat-value">{stats.total}</p>
-            <p className="insertions__stat-label">Total</p>
+            <div className="insertions__stat-icon">
+              <Users size={18} />
+            </div>
+            <div>
+              <p className="insertions__stat-value">{stats.total}</p>
+              <p className="insertions__stat-label">Total</p>
+            </div>
           </div>
           <div className="insertions__stat insertions__stat--yellow">
-            <p className="insertions__stat-value">{stats.enAttente}</p>
-            <p className="insertions__stat-label">En attente</p>
+            <div className="insertions__stat-icon">
+              <Clock size={18} />
+            </div>
+            <div>
+              <p className="insertions__stat-value">{stats.enAttente}</p>
+              <p className="insertions__stat-label">En attente</p>
+            </div>
           </div>
           <div className="insertions__stat insertions__stat--blue">
-            <p className="insertions__stat-value">{stats.enCours}</p>
-            <p className="insertions__stat-label">En cours</p>
+            <div className="insertions__stat-icon">
+              <RefreshCw size={18} />
+            </div>
+            <div>
+              <p className="insertions__stat-value">{stats.enCours}</p>
+              <p className="insertions__stat-label">En cours</p>
+            </div>
           </div>
           <div className="insertions__stat insertions__stat--green">
-            <p className="insertions__stat-value">{stats.clotures}</p>
-            <p className="insertions__stat-label">Clôturés</p>
+            <div className="insertions__stat-icon">
+              <CheckCircle size={18} />
+            </div>
+            <div>
+              <p className="insertions__stat-value">{stats.clotures}</p>
+              <p className="insertions__stat-label">Clôturés</p>
+            </div>
           </div>
         </div>
 

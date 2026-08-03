@@ -7,8 +7,13 @@
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 100;
+  z-index: 200;
   overflow-y: auto;
+  transition: transform 0.25s ease;
+}
+
+.sidebar__overlay {
+  display: none;
 }
 
 /* Logo */
@@ -154,7 +159,19 @@
 /* Responsive */
 @media (max-width: 768px) {
   .sidebar {
-    display: none;
+    transform: translateX(-100%);
+  }
+
+  .sidebar--open {
+    transform: translateX(0);
+  }
+
+  .sidebar__overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 150;
   }
 }
 

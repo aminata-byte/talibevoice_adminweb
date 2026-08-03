@@ -22,4 +22,8 @@
   .admin-layout__main {
     margin-left: 0;
   }
+
+  .admin-layout__content {
+    padding: 1rem;
+  }
 }

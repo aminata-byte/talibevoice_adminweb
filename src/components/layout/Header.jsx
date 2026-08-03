@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { Bell, User } from "lucide-react";
+import { Bell, User, Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import adminService from "../../services/adminService";
 import "./Header.css";
 
-function Header({ titre }) {
+function Header({ titre, onMenuClick }) {
   const admin = JSON.parse(localStorage.getItem("admin") || "{}");
   const navigate = useNavigate();
   const [nonLues, setNonLues] = useState(0);
@@ -28,6 +28,13 @@ function Header({ titre }) {
   return (
     <header className="header">
       <div className="header__left">
+        <button
+          className="header__menu-btn"
+          onClick={onMenuClick}
+          aria-label="Ouvrir le menu"
+        >
+          <Menu size={22} />
+        </button>
         <h1 className="header__titre">{titre}</h1>
       </div>
 

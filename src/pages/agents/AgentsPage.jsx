@@ -159,13 +159,8 @@ function AgentsPage() {
                         >
                           <td>
                             <div className="page__table-name">
-                              <div className="agents__avatar">
-                                {agent.name?.[0]?.toUpperCase()}
-                              </div>
-                              <div>
-                                <strong>{agent.name}</strong>
-                                <span>{agent.email}</span>
-                              </div>
+                              <strong>{agent.name}</strong>
+                              <span>{agent.email}</span>
                             </div>
                           </td>
                           <td>{agent.zone_affectation || "—"}</td>

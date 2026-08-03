@@ -1,21 +1,28 @@
-.agents__avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--primary);
-  color: white;
+.agents .page__table-name {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.agents .page__table-name strong {
   font-size: 14px;
-  flex-shrink: 0;
+  color: var(--text-primary);
+}
+
+.agents .page__table-name span {
+  font-size: 12px;
+  color: var(--text-secondary);
 }
 
 .agents__mini-stats {
   display: flex;
   gap: 4px;
   flex-wrap: wrap;
+}
+
+.agents .badge {
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .agents__statut {

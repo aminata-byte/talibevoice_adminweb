@@ -1,4 +1,5 @@
 import "./Sidebar.css";
+import { useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -107,9 +108,26 @@ const menuCategories = [
   },
 ];
 
-function Sidebar() {
+const SCROLL_KEY = "admin-sidebar-scroll";
+
+function Sidebar({ isOpen, onClose }) {
   const navigate = useNavigate();
   const { admin, logout } = useAdminAuth();
+  const sidebarRef = useRef(null);
+
+  useEffect(() => {
+    const el = sidebarRef.current;
+    if (!el) return;
+
+    const savedScroll = sessionStorage.getItem(SCROLL_KEY);
+    if (savedScroll) el.scrollTop = parseInt(savedScroll, 10);
+
+    const handleScroll = () => {
+      sessionStorage.setItem(SCROLL_KEY, String(el.scrollTop));
+    };
+    el.addEventListener("scroll", handleScroll);
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -117,7 +135,14 @@ function Sidebar() {
   };
 
   return (
-    <aside className="sidebar">
+    <>
+      {isOpen && (
+        <div className="sidebar__overlay" onClick={onClose} aria-hidden="true" />
+      )}
+      <aside
+        className={`sidebar ${isOpen ? "sidebar--open" : ""}`}
+        ref={sidebarRef}
+      >
       <div className="sidebar__logo">
         <img
           src="/logo.jpg"
@@ -137,6 +162,7 @@ function Sidebar() {
               <NavLink
                 key={itemIndex}
                 to={item.path}
+                onClick={onClose}
                 className={({ isActive }) =>
                   `sidebar__link ${isActive ? "sidebar__link--active" : ""}`
                 }
@@ -175,7 +201,8 @@ function Sidebar() {
           </button>
         </div>
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }
 

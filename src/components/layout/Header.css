@@ -12,10 +12,32 @@
 }
 
 /* Gauche */
+.header__left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .header__titre {
   font-size: 1.2rem;
   font-weight: 700;
   color: var(--text-primary);
+}
+
+.header__menu-btn {
+  display: none;
+  background: transparent;
+  color: var(--text-primary);
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.header__menu-btn:hover {
+  background-color: var(--background);
 }
 
 /* Droite */
@@ -101,5 +123,13 @@
 @media (max-width: 768px) {
   .header__profile-info {
     display: none;
+  }
+
+  .header__menu-btn {
+    display: flex;
+  }
+
+  .header {
+    padding: 0 1rem;
   }
 }

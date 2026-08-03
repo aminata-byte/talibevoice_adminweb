@@ -108,11 +108,14 @@
   background-color: var(--white);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 .page__table {
   width: 100%;
+  min-width: 700px;
   border-collapse: collapse;
   font-size: 14px;
 }
