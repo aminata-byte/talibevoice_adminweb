@@ -146,7 +146,7 @@ function Sidebar({ isOpen, onClose }) {
       <div className="sidebar__logo">
         <img
           src="/logo.jpg"
-          alt="TalibeVoice"
+          alt="Sunu Daara"
           className="sidebar__logo-img"
         />
         <span className="sidebar__logo-label">Admin</span>

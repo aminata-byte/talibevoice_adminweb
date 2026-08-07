@@ -63,9 +63,9 @@ function LoginPage() {
         <div className="login__left-content">
           <div className="login__brand">
             <div className="login__brand-logo">
-              <img src="/logo.jpg" alt="TalibeVoice" />
+              <img src="/logo.jpg" alt="Sunu Daara" />
             </div>
-            <h1 className="login__brand-name">TalibeVoice</h1>
+            <h1 className="login__brand-name">Sunu Daara</h1>
             <span className="login__brand-badge">Administration</span>
           </div>
 
@@ -162,7 +162,7 @@ function LoginPage() {
           </div>
 
           <div className="login__form-footer">
-            <p>Accès sécurisé — TalibeVoice v1.0</p>
+            <p>Accès sécurisé — Sunu Daara v1.0</p>
             <div className="login__form-footer-links">
               <a href="#">CONDITIONS</a>
               <a href="#">SÉCURITÉ</a>
